@@ -308,6 +308,11 @@ public:
 
   void communicate_recv_counts_secondary_events();
 
+  /**
+   * Set time measurements for internal profiling to zero (reg. sim. dyn.)
+   */
+  virtual void reset_timers_for_mpi_communication();
+
 private:
   int num_processes_;              //!< number of MPI processes
   int rank_;                       //!< rank of the MPI process
@@ -378,6 +383,13 @@ private:
   void communicate_Allgather( std::vector< T >& send_buffer,
     std::vector< T >& recv_buffer,
     std::vector< int >& displacements );
+
+  #ifdef TIMER_DETAILED
+    // private stop watches for benchmarking purposes
+    // (intended for internal core developers, not for use in the public API)
+    Stopwatch sw_communicate_spike_data_global_;
+    Stopwatch sw_communicate_spike_data_local_;
+  #endif
 
 #endif /* #ifdef HAVE_MPI */
 
