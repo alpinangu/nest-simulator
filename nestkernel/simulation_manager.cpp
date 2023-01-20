@@ -520,6 +520,7 @@ nest::SimulationManager::prepare()
   // reset profiling timers
   reset_timers_for_dynamics();
   kernel().event_delivery_manager.reset_timers_for_dynamics();
+  kernel().mpi_manager.reset_timers_for_mpi_communication();
 
   t_real_ = 0;
   t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag

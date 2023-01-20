@@ -603,6 +603,8 @@ const Name tics_per_ms( "tics_per_ms" );
 const Name tics_per_step( "tics_per_step" );
 const Name time_collocate_spike_data( "time_collocate_spike_data" );
 const Name time_collocate_spike_data_cpu( "time_collocate_spike_data_cpu" );
+const Name time_communicate_spike_data_global( "time_communicate_spike_data_global" );
+const Name time_communicate_spike_data_local( "time_communicate_spike_data_local" );
 const Name time_communicate_prepare( "time_communicate_prepare" );
 const Name time_communicate_prepare_cpu( "time_communicate_prepare_cpu" );
 const Name time_communicate_spike_data( "time_communicate_spike_data" );
