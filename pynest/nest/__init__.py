@@ -261,7 +261,11 @@ class NestModule(types.ModuleType):
         ),
         readonly=True,
     )
-
+    cycle_time_log = KernelAttribute(
+        "dict",
+        ("Information on duration of each update cycle."),
+        readonly=True,
+    )
     use_wfr = KernelAttribute("bool", "Whether to use waveform relaxation method", default=True)
     wfr_comm_interval = KernelAttribute(
         "float",
