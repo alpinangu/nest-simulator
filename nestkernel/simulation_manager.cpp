@@ -66,6 +66,7 @@ nest::SimulationManager::SimulationManager()
   , eprop_update_interval_( 1000. )
   , eprop_learning_window_( 1000. )
   , eprop_reset_neurons_on_update_( true )
+  , cycle_time_log_()
 {
 }
 
@@ -107,6 +108,8 @@ nest::SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_
 
   reset_timers_for_preparation();
   reset_timers_for_dynamics();
+
+  cycle_time_log_.clear();
 }
 
 void
@@ -483,6 +486,13 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   sw_deliver_spike_data_.get_status( d, names::time_deliver_spike_data, names::time_deliver_spike_data_cpu );
   sw_deliver_secondary_data_.get_status(
     d, names::time_deliver_secondary_data, names::time_deliver_secondary_data_cpu );
+
+  #ifdef TIMER_DETAILED
+    DictionaryDatum log_events = DictionaryDatum( new Dictionary );
+    ( *d )[ names::cycle_time_log ] = log_events;
+    cycle_time_log_.to_dict( log_events );
+  #endif
+
   def< double >( d, names::eprop_update_interval, eprop_update_interval_ );
   def< double >( d, names::eprop_learning_window, eprop_learning_window_ );
   def< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
@@ -1087,6 +1097,7 @@ nest::SimulationManager::update_()
           // We cannot throw exception inside master, would not get caught.
           const double end_current_update = sw_simulate_.elapsed();
           const double update_time = end_current_update - start_current_update;
+          cycle_time_log_.add_entry( update_time );
           update_time_limit_exceeded = update_time > update_time_limit_;
           min_update_time_ = std::min( min_update_time_, update_time );
           max_update_time_ = std::max( max_update_time_, update_time );
