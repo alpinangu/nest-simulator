@@ -846,6 +846,10 @@ nest::SimulationManager::update_()
   bool update_time_limit_exceeded = false;
   // End of variables updated by master thread
 
+  double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
+
+  long start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
 // parallel section begins
@@ -1111,6 +1115,16 @@ nest::SimulationManager::update_()
           // exceptions in parallel context. So we set a flag and process it immediately
           // after the master section.
           update_time_limit_exceeded = update_time > update_time_limit_;
+
+          const double end_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
+          const double communicate_time = end_current_communicate - start_current_communicate;
+          start_current_communicate = end_current_communicate;
+
+          const long end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+          const long local_spike_counter = end_local_spike_counter - start_local_spike_counter;
+          start_local_spike_counter = end_local_spike_counter;
+
+          cycle_time_log_.add_entry( update_time, communicate_time, local_spike_counter );
         }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
