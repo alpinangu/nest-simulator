@@ -140,6 +140,14 @@ EventDeliveryManager::finalize( const bool )
   recv_buffer_off_grid_spike_data_.clear();
 }
 
+double
+EventDeliveryManager::get_sw_communicate_spike_data()
+{
+#ifdef TIMER_DETAILED
+  return sw_communicate_spike_data_.elapsed();
+#endif
+}
+
 void
 EventDeliveryManager::set_status( const DictionaryDatum& dict )
 {
@@ -324,6 +332,12 @@ EventDeliveryManager::reset_timers_for_dynamics()
 {
   sw_collocate_spike_data_.reset();
   sw_communicate_spike_data_.reset();
+}
+
+long
+EventDeliveryManager::get_local_spike_counter()
+{
+  return accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
 }
 
 void

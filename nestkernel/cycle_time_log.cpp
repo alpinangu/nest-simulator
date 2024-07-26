@@ -31,6 +31,8 @@ namespace nest
 
 CycleTimeLog::CycleTimeLog()
   : cycle_update_time_()
+  , communicate_time_()
+  , local_spike_counter_()
 {
 }
 
@@ -38,12 +40,16 @@ void
 CycleTimeLog::clear()
 {
   cycle_update_time_.clear();
+  communicate_time_.clear();
+  local_spike_counter_.clear();
 }
 
 void
-CycleTimeLog::add_entry( double cycle_update_time )
+CycleTimeLog::add_entry( double cycle_update_time, double communicate_time, long local_spike_counter )
 {
   cycle_update_time_.emplace_back( cycle_update_time );
+  communicate_time_.emplace_back( communicate_time );
+  local_spike_counter_.emplace_back( local_spike_counter );
 }
 
 void
@@ -51,6 +57,12 @@ CycleTimeLog::to_dict( DictionaryDatum& events ) const
 {
   initialize_property_doublevector( events, names::times );
   append_property( events, names::times, cycle_update_time_ );
+
+  initialize_property_doublevector( events, "communicate_time" );
+  append_property( events, "communicate_time", communicate_time_ );
+
+  initialize_property_intvector( events, "local_spike_counter" );
+  append_property( events, "local_spike_counter", local_spike_counter_ );
 }
 
 }

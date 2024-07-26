@@ -68,6 +68,8 @@ public:
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
+  double get_sw_communicate_spike_data();
+
   /**
    * Standard routine for sending events.
    *
@@ -267,6 +269,8 @@ public:
    * Set time measurements for internal profiling to zero (reg. sim. dyn.)
    */
   virtual void reset_timers_for_dynamics();
+
+  long get_local_spike_counter();
 
 private:
   template < typename SpikeDataT >
