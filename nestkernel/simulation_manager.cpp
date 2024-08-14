@@ -847,6 +847,8 @@ nest::SimulationManager::update_()
   // End of variables updated by master thread
 
   double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
+  auto [ start_current_communicate_global, start_current_communicate_local, start_current_synch ] =
+    kernel().mpi_manager.get_sw_communicate();
 
   long start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
 
@@ -1120,11 +1122,25 @@ nest::SimulationManager::update_()
           const double communicate_time = end_current_communicate - start_current_communicate;
           start_current_communicate = end_current_communicate;
 
+          auto [ end_current_communicate_global, end_current_communicate_local, end_current_synch ] =
+            kernel().mpi_manager.get_sw_communicate();
+          const double communicate_time_global = end_current_communicate_global - start_current_communicate_global;
+          const double communicate_time_local = end_current_communicate_local - start_current_communicate_local;
+          const double synch_time = end_current_synch - start_current_synch;
+          start_current_communicate_global = end_current_communicate_global;
+          start_current_communicate_local = end_current_communicate_local;
+          start_current_synch = end_current_synch;
+
           const long end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
           const long local_spike_counter = end_local_spike_counter - start_local_spike_counter;
           start_local_spike_counter = end_local_spike_counter;
 
-          cycle_time_log_.add_entry( update_time, communicate_time, local_spike_counter );
+          cycle_time_log_.add_entry( update_time,
+            communicate_time,
+            communicate_time_global,
+            communicate_time_local,
+            synch_time,
+            local_spike_counter );
         }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
