@@ -32,6 +32,9 @@ namespace nest
 CycleTimeLog::CycleTimeLog()
   : cycle_update_time_()
   , communicate_time_()
+  , communicate_time_global_()
+  , communicate_time_local_()
+  , synch_time_()
   , local_spike_counter_()
 {
 }
@@ -41,14 +44,25 @@ CycleTimeLog::clear()
 {
   cycle_update_time_.clear();
   communicate_time_.clear();
+  communicate_time_global_.clear();
+  communicate_time_local_.clear();
+  synch_time_.clear();
   local_spike_counter_.clear();
 }
 
 void
-CycleTimeLog::add_entry( double cycle_update_time, double communicate_time, long local_spike_counter )
+CycleTimeLog::add_entry( double cycle_update_time,
+  double communicate_time,
+  double communicate_time_global,
+  double communicate_time_local,
+  double synch_time,
+  long local_spike_counter )
 {
   cycle_update_time_.emplace_back( cycle_update_time );
   communicate_time_.emplace_back( communicate_time );
+  communicate_time_global_.emplace_back( communicate_time_global );
+  communicate_time_local_.emplace_back( communicate_time_local );
+  synch_time_.emplace_back( synch_time );
   local_spike_counter_.emplace_back( local_spike_counter );
 }
 
@@ -60,6 +74,15 @@ CycleTimeLog::to_dict( DictionaryDatum& events ) const
 
   initialize_property_doublevector( events, "communicate_time" );
   append_property( events, "communicate_time", communicate_time_ );
+
+  initialize_property_doublevector( events, "communicate_time_global" );
+  append_property( events, "communicate_time_global", communicate_time_global_ );
+
+  initialize_property_doublevector( events, "communicate_time_local" );
+  append_property( events, "communicate_time_local", communicate_time_local_ );
+
+  initialize_property_doublevector( events, "synch_time" );
+  append_property( events, "synch_time", synch_time_ );
 
   initialize_property_intvector( events, "local_spike_counter" );
   append_property( events, "local_spike_counter", local_spike_counter_ );

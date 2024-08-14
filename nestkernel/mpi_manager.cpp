@@ -262,6 +262,16 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 }
 
+std::tuple< double, double, double >
+nest::MPIManager::get_sw_communicate()
+{
+#ifdef TIMER_DETAILED
+  return {
+    sw_communicate_spike_data_global_.elapsed(), sw_communicate_spike_data_local_.elapsed(), sw_synch_global_.elapsed()
+  };
+#endif
+}
+
 #ifdef HAVE_MPI
 
 void

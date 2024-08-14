@@ -40,12 +40,20 @@ class CycleTimeLog
 public:
   CycleTimeLog();
   void clear();
-  void add_entry( double cycle_update_time, double communicate_time, long local_spike_counter );
+  void add_entry( double cycle_update_time,
+    double communicate_time,
+    double communicate_time_global,
+    double communicate_time_local,
+    double synch_time,
+    long local_spike_counter );
   void to_dict( DictionaryDatum& ) const;
 
 private:
   std::vector< double > cycle_update_time_; //!< Time of one update cycle
   std::vector< double > communicate_time_;  // Time of communicate in current cycle
+  std::vector< double > communicate_time_global_;
+  std::vector< double > communicate_time_local_;
+  std::vector< double > synch_time_;
   std::vector< long > local_spike_counter_; // Local spike count in current cycle
 };
 

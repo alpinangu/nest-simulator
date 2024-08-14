@@ -72,6 +72,9 @@ public:
   void get_status( DictionaryDatum& ) override;
 
   void init_mpi( int* argc, char** argv[] );
+
+  std::tuple< double, double, double > get_sw_communicate();
+
 #ifdef HAVE_MPI
   void set_communicator( MPI_Comm );
 
