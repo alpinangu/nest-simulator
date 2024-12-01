@@ -99,39 +99,28 @@ const double numerics::sqrt_log_two = std::sqrt( std::log( 2.0 ) );
 long
 ld_round( double x )
 {
-  return static_cast< long >( std::floor( x + 0.5 ) );
+  return std::lround(x);
 }
 
 double
 dround( double x )
 {
-  return std::floor( x + 0.5 );
+  return std::round(x);
 }
 
 double
 dtruncate( double x )
 {
-  double ip;
-
-  std::modf( x, &ip );
-  return ip;
+  return std::trunc(x);
 }
 
 bool
 is_integer( double n )
 {
-  double int_part;
-  double frac_part = std::modf( n, &int_part );
-
-  // Since n > 0 and modf always rounds towards zero, a value of n just below an
-  // integer will result in frac_part = 0.99999.... . We subtract from 1 in this case.
-  if ( frac_part > 0.5 )
-  {
-    frac_part = 1 - frac_part;
-  }
-
-  // factor 4 allows for two bits of rounding error
-  return frac_part < 4 * n * std::numeric_limits< double >::epsilon();
+  // Checks if n is an integer by comparing the difference between n and its nearest integer (rounded)
+  // against a scaled tolerance. The tolerance is proportional to n for large values (to account for 
+  // floating-point precision) and fixed for small values (to avoid overly tight thresholds near zero).
+  return std::abs(n - rounded) < std::numeric_limits<double>::epsilon() * 4 * std::max(1.0, std::abs(n));
 }
 
 long
@@ -169,7 +158,7 @@ mod_inverse( long a, long m )
 
   // If a ≥ m, the algorithm needs two extra rounds to transform this to
   // a' < m, so we take care of this in a single step here.
-  a = a % m;
+  if (a >= m) a %= m;
 
   // Use half of extended Euclidean algorithm required to compute inverse
   long s_0 = 1;
