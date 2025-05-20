@@ -248,6 +248,24 @@ public:
    *  GetKernelStatus
    */
 
+  class Launch_l_ifunction : public SLIFunction 
+  {
+  public:
+    void execute(SLIInterpreter* i) const override;
+  } Launch_l_ifunction;
+
+  class SetApplicationMap_Dfunction : public SLIFunction 
+  {
+  public:
+    void execute(SLIInterpreter* i) const override;
+  } SetApplicationMap_Dfunction;
+
+  class SetConnectivityMap_Dfunction : public SLIFunction 
+  {
+  public:
+    void execute(SLIInterpreter* i) const override;
+  } SetConnectivityMap_Dfunction;
+
   class GetStatus_gFunction : public SLIFunction
   {
   public:

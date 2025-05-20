@@ -39,6 +39,24 @@ namespace nest
 {
 
 void
+launch(const std::string exe, const long n)
+{
+  kernel().multi_network_manager.launch( exe, n );
+}
+
+void 
+set_application_map(const DictionaryDatum& dict)
+{
+  kernel().multi_network_manager.set_application_map(dict);
+}
+
+void 
+set_connectivity_map(const DictionaryDatum& dict)
+{
+  kernel().multi_network_manager.set_connectivity_map(dict);
+}
+
+void
 init_nest( int* argc, char** argv[] )
 {
   KernelManager::create_kernel_manager();

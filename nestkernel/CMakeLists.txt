@@ -81,6 +81,9 @@ set ( nestkernel_sources
       vp_manager.h vp_manager_impl.h vp_manager.cpp
       io_manager.h io_manager_impl.h io_manager.cpp
       mpi_manager.h mpi_manager_impl.h mpi_manager.cpp
+      multi_network_manager.h multi_network_manager.cpp
+      application_map.h application_map.cpp
+      connectivity_map.h connectivity_map.cpp
       simulation_manager.h simulation_manager.cpp
       connection_manager.h connection_manager_impl.h connection_manager.cpp
       sp_manager.h sp_manager_impl.h sp_manager.cpp

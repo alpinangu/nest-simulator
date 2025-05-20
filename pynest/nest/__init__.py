@@ -101,6 +101,7 @@ class NestModule(types.ModuleType):
         _rel_import_star(self, ".lib.hl_api_sonata")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_spatial")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_types")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_multi_network")   # noqa: F821
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
         type(self).raster_plot = _lazy_module_property("raster_plot")  # noqa: F821

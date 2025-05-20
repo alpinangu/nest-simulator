@@ -42,6 +42,10 @@
 namespace nest
 {
 
+void launch(const std::string exe, const long n);
+void set_application_map(const DictionaryDatum& dict);
+void set_connectivity_map(const DictionaryDatum& dict);
+
 void init_nest( int* argc, char** argv[] );
 void fail_exit( int exitcode );
 

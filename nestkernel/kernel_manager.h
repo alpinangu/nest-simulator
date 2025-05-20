@@ -41,6 +41,7 @@
 #include "simulation_manager.h"
 #include "sp_manager.h"
 #include "vp_manager.h"
+#include "multi_network_manager.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -286,6 +287,7 @@ public:
   ModelManager model_manager;
   MUSICManager music_manager;
   NodeManager node_manager;
+  MultiNetworkManager multi_network_manager;
   /**@}*/
 private:
   //! All managers, order determines initialization and finalization order (latter backwards)

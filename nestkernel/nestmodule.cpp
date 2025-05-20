@@ -303,6 +303,51 @@ create_doughnut( const DictionaryDatum& d )
   return new DifferenceMask< 2 >( outer_circle, inner_circle );
 }
 
+void
+NestModule::Launch_l_ifunction::execute( SLIInterpreter* i ) const
+{
+  // check for stack load
+  i->assert_stack_load( 2 );
+
+  // extract arguments
+  const long n = getValue<long>( i->OStack.pick( 0 ) );
+  const std::string exe = getValue< std::string >( i->OStack.pick( 1 ) );
+
+  launch( exe, n );
+
+  i->OStack.pop( 2 );
+  i->EStack.pop();
+}
+
+void
+NestModule::SetApplicationMap_Dfunction::execute( SLIInterpreter* i ) const
+{
+  // check for stack load
+  i->assert_stack_load( 1 );
+
+  // extract arguments
+  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
+
+  set_application_map( dict );
+
+  i->OStack.pop();
+  i->EStack.pop();
+}
+
+void
+NestModule::SetConnectivityMap_Dfunction::execute( SLIInterpreter* i ) const
+{
+  // check for stack load
+  i->assert_stack_load( 1 );
+
+  // extract arguments
+  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
+
+  set_connectivity_map( dict );
+
+  i->OStack.pop();
+  i->EStack.pop();
+}
 
 void
 NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
@@ -2056,6 +2101,9 @@ NestModule::init( SLIInterpreter* i )
 
   // register interface functions with interpreter
 
+  i->createcommand("Launch_l_i", &Launch_l_ifunction);
+  i->createcommand("SetApplicationMap_D", &SetApplicationMap_Dfunction);
+  i->createcommand("SetConnectivityMap_D", &SetConnectivityMap_Dfunction);
   i->createcommand( "SetStatus_id", &setstatus_idfunction );
   i->createcommand( "SetStatus_CD", &setstatus_CDfunction );
   i->createcommand( "SetStatus_aa", &setstatus_aafunction );
