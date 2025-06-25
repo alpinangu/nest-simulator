@@ -1,0 +1,48 @@
+/*
+ *  This file is part of MUSIC.
+ *  Copyright (C) 2007, 2008, 2009, 2022 INCF
+ *
+ *  MUSIC is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  MUSIC is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#ifndef ARRAY_DATA_H
+#define ARRAY_DATA_H
+
+#include "nest/multi_network/config.h"
+#include <nest/multi_network/data_map.h>
+
+namespace nest {
+
+  /*
+   * This data map is part of the MUSIC API and documented
+   * in section 4.3.9 of the MUSIC manual.
+   */
+
+  class ArrayData : public DataMap {
+    MPI_Datatype type_;
+    IndexMap* indexMap_;
+  public:
+    ArrayData (void* buffer, MPI_Datatype type, IndexMap* map);
+    ArrayData (void* buffer, MPI_Datatype type, int baseIndex, int size);
+    virtual ~ArrayData ();
+    virtual DataMap* copy ();
+    virtual MPI_Datatype type () { return type_; }
+    virtual IndexMap* indexMap () { return indexMap_; }
+  };
+
+} // namespace
+
+//#endif /* HAVE_MPI */
+#endif /* ARRAY_DATA_H */
