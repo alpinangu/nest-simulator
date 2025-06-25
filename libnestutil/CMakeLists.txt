@@ -34,6 +34,7 @@ set( nestutil_sources
     stopwatch.h stopwatch.cpp
     string_utils.h
     vector_util.h
+    ioutils.h ioutils.cpp
     )
 
 add_library( nestutil STATIC ${nestutil_sources} )
