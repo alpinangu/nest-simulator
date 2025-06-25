@@ -100,6 +100,12 @@ public:
       return remoteLeader_;
     }
 
+    void
+    setRemoteLeader (int leader)
+    {
+      remoteLeader_ = leader;
+    }
+
     int
     nRemoteProcesses () const
     {
@@ -118,6 +124,12 @@ public:
     processingMethod () const
     {
       return procMethod_;
+    }
+
+    static void
+    registerPortCode (int portCode)
+    {
+      maxPortCode_ = std::max (portCode, maxPortCode_);
     }
 };
 
@@ -173,10 +185,13 @@ public:
 //This class is spesific to each app and populated differently
 class Connectivity
 {
+  // connectivityMap_ seems obsolote, create a map between the names and connectivityInfo directy.
     //A vector containing all connections of the app
-    std::vector<ConnectivityInfo> connections_;
+    //std::vector<ConnectivityInfo> connections_;
     //Maps the name of the app's port(receiver or sender) to the index within the connections_ vector
-    std::map<std::string, int> connectivityMap_;
+    //std::map<std::string, int> connectivityMap_;
+
+    std::map<std::string, ConnectivityInfo> connectionMap_;
 
 public:
     Connectivity ()
@@ -188,6 +203,8 @@ public:
         int remoteLeader, int remoteNProc, int commType, int procMethod);
 
     void write(std::ostream& out);
+
+    void read (std::istringstream& in);
 
     
 };

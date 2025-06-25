@@ -25,21 +25,52 @@
 // C++ includes:
 #include <sstream>
 #include <algorithm>
+#include <mpi.h>
+#include <unistd.h>
+#include <variant>
 
 // Includes from libnestutil:
+#include "libnestutil/error.h"
 
 // Includes from nestkernel:
 #include "connectivity_map.h"
 #include "token.h" 
 
-
+//Includes from multi_network
+#include "ioutils.h"
 
 
 namespace nest
 {
 
+const char* const MultiNetworkManager::configEnvVarName = "_MUSIC_CONFIG_";
+
 bool MultiNetworkManager::isApplicationMapSet_ = false;
 bool MultiNetworkManager::isConnMapCalled_ = false;
+
+struct Argv 
+{
+    std::vector<std::string> strings;
+    std::vector<char*> ptrs;
+
+    Argv(const std::string& cmdline) 
+    {
+        std::istringstream iss(cmdline);
+        std::string token;
+        while (iss >> token)
+        {
+            strings.push_back(std::move(token));
+        }
+        ptrs.reserve(strings.size()+1);
+        for (auto &s : strings) 
+        {
+            ptrs.push_back(s.data());
+        }
+        ptrs.push_back(nullptr);
+    }
+
+    char* const* argv() const { return ptrs.data(); }
+};
 
 MultiNetworkManager::MultiNetworkManager()
 {
@@ -74,7 +105,43 @@ MultiNetworkManager::get_status( DictionaryDatum& )
 void
 MultiNetworkManager::launch(const std::string exe, const long n)
 {
-    std::cout << " dont use this" << std::endl;
+    std::string binary;
+    application_map_.get_variable(app_color_, "binary", &binary);
+
+    writeEnv();
+
+    std::string wd;
+    if (application_map_.get_variable(app_color_, "wd", &wd))
+    {
+        if (chdir (wd.c_str ()))
+        {
+            //TODO: Howw should I handle this?
+            std::cerr << "Error during launching of: " << binary << std::endl;
+            perror ("MULTI-NETWWORK");
+            exit (1);
+        }
+    }
+
+    std::string argv;
+    application_map_.get_variable(app_color_, "argv", &argv);
+
+    if(binary == "python3")
+    {
+        std::string cmd = binary + " " + argv;   // "python3 app2.py"
+        Argv a(cmd);
+
+        execvp(binary.c_str(), a.argv());
+    }
+    else
+    {
+        Argv a(argv);
+        execvp(binary.c_str(), a.argv());
+    }
+
+    perror("execvp failed");
+    std::exit(EXIT_FAILURE);
+    
+
 }
 
 /*
@@ -91,7 +158,8 @@ dict = {
     "app1_name": {
         "binary": "./app",
         "np": 1,
-        "args": "arg1 arg1" SHOULD THERE BE A DELIMETER??
+        "argv": "arg1 arg1" SHOULD THERE BE A DELIMETER??
+        "wd": "working directory" (apps do not have to be in the same directory)
         "local_var": "value"
     },
     .
@@ -104,6 +172,7 @@ MultiNetworkManager::set_application_map(const DictionaryDatum& dict)
 
     std::cout << "you are in the func" << std::endl;
 
+    int appcounter = 0;
     for (auto it = dict->begin(); it != dict->end(); ++it)
     {
         
@@ -119,8 +188,8 @@ MultiNetworkManager::set_application_map(const DictionaryDatum& dict)
 
             DictionaryDatum subdict = getValue<DictionaryDatum>(subtoken);
 
-            int np;
-            std::map<std::string, std::variant<int, std::string, double>> app_dict;
+            int np = -1;
+            std::map<std::string, std::string> app_dict;
             for (auto  ti = subdict->begin(); ti != subdict->end(); ++ti)
             {
                 std::string key  = ti->first.toString();
@@ -131,14 +200,30 @@ MultiNetworkManager::set_application_map(const DictionaryDatum& dict)
                 if(key == "np")
                     np = getValue<long>(value);
                 else
-                    app_dict[key] = getValue<std::string>(value);
+                {
+                    if (value.is_a<std::string>())
+                    {
+                        app_dict[key] = getValue<std::string>(value);
+                    }
+                    else
+                        //TODO: handle case
+                        std::cout << "Give the variables as a string" << std::endl;
+                }
+                    
 
             }
 
+            if(np == -1)
+            {   
+                //TODO: HANDLE THIS WITH A LOG
+                exit(111);
+            }
             //??????
             //should we add binary to the map to or assign color to binaries in a different map?
-            std::cout << "Application " << app_name << " with " << np << " has been added " << std::endl;
-            application_map_.add(app_name, np, 0, app_dict);
+            std::cout << "Application " << app_name << " with " << np << " has been added as color: " << appcounter << std::endl;
+            application_map_.add(app_name, np, appcounter, app_dict);
+
+            appcounter++;
         }
         else
         {
@@ -154,24 +239,30 @@ MultiNetworkManager::set_application_map(const DictionaryDatum& dict)
 
             else
             {
-                int var_value = getValue<long>(subtoken);
-                application_map_.add_global_dict(var_name, var_value);
+                //TODO: handle case
+                std::cout << "Give the variables as a string" << std::endl;
             }
         }
 
     }
+
+    int rank = get_rank();
+    app_color_ = application_map_.assign_app(rank);
+
+    application_map_.set_leaders();
 
     isApplicationMapSet_ = true;
     if(isConnMapCalled_ == true)
     {
         set_connectivity_map(ConnMapBackup_);
     }
-
+    /*
     writeEnv(std::cout, 0);
     std::cout << "" << std::endl;
     writeEnv(std::cout, 1);
     std::cout << "" << std::endl;
     writeEnv(std::cout, 2);
+    */
 
 }
 
@@ -329,7 +420,7 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
                 //leader is always 0
                 app->second.add (
                 dir == ConnectivityInfo::OUTPUT ? senderPortName : receiverPortName,
-                dir, width, receiverAppName, receiverPortName, portCode, 0,
+                dir, width, receiverAppName, receiverPortName, portCode, remoteInfo->leader(),
                 remoteInfo->nProc (), iCommType, iProcMethod);
 
             }
@@ -337,25 +428,31 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
                 std::cout << "Keys must be a dictionary" << std::endl;
 
         }
-        //std::cout << "" << std::endl;
-        //std::cout << app->first << ": " << std::endl;
-        //app->second.write(std::cout);
     }
 }
 
 void
-MultiNetworkManager::writeEnv(std::ostream& env, int app_i)
+MultiNetworkManager::writeEnv()
 {
     //std::ostringstream env;
-    const ApplicationInfo& app = application_map_.appAt(app_i);
+    const ApplicationInfo& app = application_map_.appAt(app_color_);
+    std::ostringstream env;
 
-    env << app.name() << ':';
+    env << app.name() << ':'<< app.color() << ':';
     application_map_.write_map (env);
     connectivityMap_[app.name()].write(env);
-    // HERE YOU NEED TO WRITE THE DICT/SECTION SPESIFIC TO THE APP (NP,BINARY,ARGS)
-    application_map_.write_app_dict(env, app_i);
-    // now global DICt
+    application_map_.write_app_dict(env, app_color_);
     application_map_.write_global_dict(env);
+
+    setenv (configEnvVarName, env.str().c_str(), 1);
+
+    //just for debugging:
+    if(get_rank() == app.leader())
+    {
+        std::cout << "From the applicaton with color " << app_color_ << "/" << app.color() << "with rank(leader) " << app.leader() << std::endl;
+        std::cout << env.str() << std::endl;
+
+    }
 } 
 /*
 
@@ -376,5 +473,135 @@ MultiNetworkManager::dict_to_string()
     return ss.str();
 }
 */
+
+int
+MultiNetworkManager::get_rank()
+{
+    char* vpid = getenv ("OMPI_MCA_ns_nds_vpid");
+    if (vpid == NULL)
+    vpid = getenv ("OMPI_COMM_WORLD_RANK");
+    if (vpid == NULL)
+    return -1;
+    std::istringstream iss (vpid);
+    int rank;
+    iss >> rank;
+    return rank;
+}
+
+void
+MultiNetworkManager::parse(std::string configStr)
+{
+    std::istringstream env (configStr);
+    //a: sets the name of the application of this proccess, it is the first part of the env var
+    app_name_ = IOUtils::read (env);
+    //a: deletes the :, delim
+    env.ignore (); // delim
+    // do not need color information,
+    // but we can use for error check
+    app_color_ = std::stoi(IOUtils::read (env));
+    env.ignore (); // delim
+    application_map_.read (env);
+    env.ignore ();
+    application_map_.set_leaders();
+    connectivityMap_[app_name_].read(env);
+    // parse config string
+    while (!env.eof ())
+    {
+        env.ignore ();
+        std::string var_name = IOUtils::read (env, '=');
+        env.ignore ();
+        std::string var_value = IOUtils::read (env);
+        //  std::cerr << name << " " << v << std::endl;
+        application_map_.add_local_dict(app_name_, var_name, var_value);
+    }
+
+}
+
+
+
+ApplicationMap*
+MultiNetworkManager::applications ()
+{
+    return &application_map_;
+}
+
+int
+MultiNetworkManager::Color()
+{
+    return application_map_.lookup (app_name_)->color ();
+}
+
+
+int
+MultiNetworkManager::Leader()
+{
+ApplicationInfo* info = application_map_.lookup (app_name_);
+    return info == 0 ? -1 : info->leader ();
+}
+
+bool
+MultiNetworkManager::lookup(std::string name, std::string* result)
+{
+    return application_map_.get_variable(app_color_, name, result);
+}
+
+bool
+MultiNetworkManager::lookup(std::string name, int* result)
+{
+    std::string* temp;
+    application_map_.get_variable(app_color_, name, temp);
+
+    std::istringstream iss(*temp);
+    if (! (iss >> *result).fail())
+      return true;
+
+    std::ostringstream oss;
+    oss << "var " << name << " given wrong type (" << *temp
+	<< "; expected int) in config file";
+    error(oss.str());
+    return true; // Doesn't happen! Just for compiler!
+
+
+}
+
+// It looks up a configuration variable by name and tries to convert its value to a double.
+// Returns true if the variable was found and successfully converted to a doubl
+// If the variable exists but is not a valid double, it throws an error
+bool
+MultiNetworkManager::lookup(std::string name, double* result)
+{
+    std::string* temp;
+    application_map_.get_variable(app_color_, name, temp);
+
+    std::istringstream iss(*temp);
+    if (! (iss >> *result).fail())
+        return true;
+
+
+    std::ostringstream oss;
+    oss << "var " << name << " given wrong type (" << *temp
+    << "; expected double) in config file";
+    error(oss.str());
+    return true; // Doesn't happen! Just for compiler!
+}
+
+bool
+MultiNetworkManager::lookup (std::string name, bool* result)
+{
+    std::string* temp;
+    application_map_.get_variable(app_color_, name, temp);
+
+    std::istringstream iss(*temp);
+    if (! (iss >> *result).fail())
+        return true;
+
+    std::ostringstream oss;
+    oss << "var " << name << " given wrong type (" << *temp
+    << "; expected bool) in config file";
+    error(oss.str ());
+    return true; // Doesn't happen! Just for compiler!
+}
+
+
 
 } // namespace nest

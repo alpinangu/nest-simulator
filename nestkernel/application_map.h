@@ -27,6 +27,10 @@
 #include <sstream>
 #include <vector>
 #include <map>
+
+//#include <variant>
+//#include <optional>
+
 namespace nest
 {
 
@@ -35,12 +39,12 @@ namespace nest
   {
     std::string name_;
     int nProc_;
-    int color_; //a: represents the section number that we assigned ot the application
-    int leader_; //a: probably wont need it since we will spawn mpi proccesses in different communicators
-    std::map<std::string, std::variant<int, std::string, double>> app_dict_;
+    int color_; // The index of the app in the application map vector
+    int leader_; // assigned -1 to indicate it has not been resolved yet.
+    std::map<std::string, std::string> app_dict_;
  
   public:
-    ApplicationInfo (std::string name, int n, int c, std::map<std::string, std::variant<int, std::string, double>> app_dict) :
+    ApplicationInfo (std::string name, int n, int c, std::map<std::string, std::string> app_dict) :
         name_ (name), nProc_ (n), color_ (c), leader_(-1), app_dict_(app_dict)
     {
     }
@@ -60,11 +64,40 @@ namespace nest
       return color_;
     }
 
+    int
+    leader() const
+    {
+      return leader_;
+    }
 
     int
     nProc() const
     {
       return nProc_;
+    }
+
+    void
+    set_leader(int leader_rank)
+    {
+      leader_ = leader_rank;
+    }
+
+  const std::string*
+  get_value(std::string const& key) const 
+  {
+      auto it = app_dict_.find(key);
+      if (it == app_dict_.end())
+          return nullptr;         // no such key
+
+      return &it->second;         // take the address of the mapped std::string
+  }
+
+
+
+    void
+    set_app_dict(std::string var_name, std::string var_value)
+    {
+      app_dict_[var_name] = var_value;
     }
 
   };
@@ -74,20 +107,28 @@ namespace nest
   class ApplicationMap
   {
     std::vector<ApplicationInfo> apps_;
-    std::map<std::string, std::variant<int, std::string, double>> globaldict_;
+    std::map<std::string, std::string> globaldict_;
 
   public:
     ApplicationMap ();
 
+    //Inst color the actual index for the vector?
+    //TODO: MKE THEM RETURN A REFERANCE NOT A POINTER
     ApplicationInfo* lookup (int color);
     ApplicationInfo* lookup(std::string name);
+    bool get_variable(int color, std::string const& key, std::string* result);
 
-    std::map<int, int>
-    assignLeaders(std::string my_app_label);
+    /*
+          std::map<int, int>
+    assignLeaders(std::string my_app_label);    
+    */
 
-    void add(std::string name, int n, int c, std::map<std::string, std::variant<int, std::string, double>> localdict);
 
-    void add_global_dict(std::string var_name, std::variant<int, std::string, double> var_value);
+    void add(std::string name, int n, int c, std::map<std::string, std::string> localdict);
+
+    void add_global_dict(std::string var_name, std::string var_value);
+
+    void add_local_dict (std::string app_name_, std::string var_name, std::string var_value);
 
     void write_map(std::ostream& out);
 
@@ -97,11 +138,25 @@ namespace nest
 
     ApplicationInfo& appAt(int i);
 
+    int assign_app(int rank);
+
+    void set_leaders();
+
+    void read (std::istringstream& in);
+
+    int nProcesses();
+
+    int size() const
+    { return apps_.size(); }
+
     std::vector<ApplicationInfo>::iterator begin() 
     { return apps_.begin(); }
 
     std::vector<ApplicationInfo>::iterator end()
     { return apps_.end(); }
+
+    ApplicationInfo& operator[](int idx) 
+    { return apps_[idx]; }
 
   };
 

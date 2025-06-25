@@ -47,6 +47,11 @@ class MultiNetworkManager : public ManagerInterface
 {
 public:
   MultiNetworkManager();
+  MultiNetworkManager(std::string configStr)
+  {
+    parse(configStr);
+  }
+
   ~MultiNetworkManager() override;
 
   void initialize( const bool ) override;
@@ -58,18 +63,36 @@ public:
   void set_application_map(const DictionaryDatum& dict);
   void set_connectivity_map(const DictionaryDatum& dict);
 
+  int get_rank();
+  void parse(std::string configStr);
+
+  static const char* const configEnvVarName;
+
+
+  ApplicationMap* applications();
+
+  int Color();
+
+  int Leader();
+
+  bool lookup (std::string name, int* result);
+  bool lookup (std::string name, double* result);
+  bool lookup(std::string name, std::string* result);
+  bool lookup (std::string name, bool* result);
+
 private:
 
   ApplicationMap application_map_;
   std::map<std::string, Connectivity> connectivityMap_;
-
-  const char* const configEnvVarName = "_MUSIC_CONFIG_";
+  int app_color_;
+  std::string app_name_;
 
   static bool isApplicationMapSet_;
   static bool isConnMapCalled_;
   DictionaryDatum ConnMapBackup_;
 
-  void writeEnv(std::ostream&, int app_i);
+  void writeEnv();
+
 
   //std::string dict_to_string();
 };

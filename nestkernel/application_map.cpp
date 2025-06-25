@@ -27,6 +27,9 @@
 #include <map>
 #include <string>
 
+//Includes from multi_network
+#include "ioutils.h"
+
 namespace nest
 {
 
@@ -37,16 +40,9 @@ ApplicationInfo::write_app_dict(std::ostream& out)
   {
     std::string name = pos->first;
     out << ':' << name << '=';
-    if (auto val = std::get_if<std::string>(&pos->second))
-    {
-      std::string value = *val;
-      out << value;
-    }
-    else if (auto val = std::get_if<int>(&pos->second))
-    {
-      int value = *val;
-      out << value;
-    }
+    auto val = &pos->second;
+    std::string value = *val;
+    out << value;
   }
 }
 ////////////////////////////
@@ -75,6 +71,34 @@ ApplicationMap::lookup(std::string name)
       return &*it;
   }
 }
+
+bool
+ApplicationMap::get_variable(int color, std::string const& key, std::string* result)
+{
+    ApplicationInfo* app_info = lookup(color);
+    if (!app_info) 
+        return false;   // no such app
+
+    // Try the app‐specific dictionary
+    if (auto opt = app_info->get_value(key)) 
+    {
+        // must be a string
+          *result = *opt;
+          return true;
+    }
+
+    // Fallback to global map
+    auto it = globaldict_.find(key);
+    if (it == globaldict_.end())
+        return false;   // no such key anywhere
+
+    if (auto pstr = &it->second) 
+    {
+        *result = *pstr;
+        return true;
+    }
+}
+
 
 /*
 //my_app_label is the app name
@@ -118,15 +142,21 @@ for (int i = 0; i < size; ++i)
 */
 
 void
-ApplicationMap::add (std::string name, int n, int c, std::map<std::string, std::variant<int, std::string, double>> localdict)
+ApplicationMap::add (std::string name, int n, int c, std::map<std::string, std::string> localdict)
 {
   apps_.push_back (ApplicationInfo (name, n, c, localdict));
 }
 
 void 
-ApplicationMap::add_global_dict (std::string var_name, std::variant<int, std::string, double> var_value)
+ApplicationMap::add_global_dict (std::string var_name, std::string var_value)
 {
   globaldict_[var_name] = var_value;
+}
+
+void 
+ApplicationMap::add_local_dict (std::string app_name_, std::string var_name, std::string var_value)
+{
+  lookup(app_name_)->set_app_dict(var_name, var_value);
 }
 
 void
@@ -154,22 +184,92 @@ ApplicationMap::write_global_dict(std::ostream& out)
   {
     std::string name = pos->first;
     out << ':' << name << '=';
-    if (auto val = std::get_if<std::string>(&pos->second))
-    {
-      std::string value = *val;
-      out << value;
-    }
-    else if (auto val = std::get_if<int>(&pos->second))
-    {
-      int value = *val;
-      out << value;
-    }
+    auto val = &pos->second;
+    std::string value = *val;
+    out << value;
   }
 }
+
+
 ApplicationInfo&
 ApplicationMap::appAt (int i)
 {
   return apps_[i];
 }
+
+int 
+ApplicationMap::assign_app(int rank)
+{
+    // Compute total number of ranks available
+    int totalProcs = 0;
+    for (auto const& app : apps_) {
+        totalProcs += app.nProc();
+    }
+
+    // Validate that the MPI rank is in [0, totalProcs)
+    if (rank < 0 || rank > totalProcs) {
+        //GIVE ERROR
+        exit(111);
+    }
+
+    // Find which app owns this rank
+    int cumulative = 0;
+    for (auto const& app : apps_) {
+        int nextBoundary = cumulative + app.nProc();
+        // rank ∈ [cumulative, nextBoundary)
+        if (rank < nextBoundary) {
+            return app.color();
+        }
+        cumulative = nextBoundary;
+    }
+
+    // Should never get here
+    //throw std::runtime_error("Failed to map rank to any application");
+}
+
+void 
+ApplicationMap::set_leaders()
+{
+    int offset = 0;                 // first rank in the current app block
+    for (auto& app : apps_) {
+      app.set_leader(offset);          
+      offset += app.nProc();      
+    }
+    // TODO: my_color not found ⇒ programming error
+}
+
+void
+ApplicationMap::read (std::istringstream& in)
+{
+  //a: The stream contains the number of applications first.
+  int nApp;
+  in >> nApp;
+
+  for (int i = 0; i < nApp; ++i)
+    {
+      in.ignore ();
+      //a: reads the app name
+      std::string name = IOUtils::read (in);
+      in.ignore ();
+      //a: The next integer from the stream is the number of processes (np) this application is assigned.
+      int np;
+      in >> np;
+
+      //TODO: need to add an updater function to populate this later.
+      std::map<std::string, std::string> localdict;
+
+      add (name, np, i, localdict);
+    }
+
+}
+
+int ApplicationMap::nProcesses()
+{
+  int n = 0;
+  for ( auto it = begin(); it != end(); ++it )
+    n += it->nProc();
+  return n;
+}
+
 
 }
