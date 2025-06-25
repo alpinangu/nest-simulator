@@ -376,6 +376,14 @@ nest::MPIManager::communicate_Allgather( std::vector< unsigned int >& send_buffe
 {
   std::vector< int > recv_counts( get_num_processes(), send_buffer_size_ );
 
+  if ( send_buffer.size() > static_cast<unsigned int>( send_buffer_size_ ) )
+  {
+    send_buffer_size_  = recv_buffer_size_ = send_buffer.size();
+  }
+
+  recv_buffer.resize( send_buffer_size_ * get_num_processes() );
+  displacements.resize( get_num_processes() );
+
   // attempt Allgather
   if ( send_buffer.size() == static_cast< unsigned int >( send_buffer_size_ ) )
   {
