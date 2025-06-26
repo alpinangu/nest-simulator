@@ -57,6 +57,9 @@
 #include "stringdatum.h"
 #include "tokenutils.h"
 
+//
+#include "nest/multi_network/multi_network_manager.h"
+
 namespace nest
 {
 #ifdef HAVE_LIBNEUROSIM
