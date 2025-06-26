@@ -58,7 +58,7 @@
 #include "tokenutils.h"
 
 //
-#include "nest/multi_network/multi_network_manager.h"
+#include "multi_network_manager.h"
 
 namespace nest
 {
