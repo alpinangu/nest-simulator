@@ -59,6 +59,8 @@ public:
   bool config (std::string var, double* result);
   bool config (std::string var, bool* result);
 
+  ContInputPort* publishContInput (std::string identifier);
+
   //ContInputPort* publishContInput (std::string identifier);
 
   
