@@ -29,7 +29,7 @@
 #include <nest/multi_network/clock.h>
 #include <nest/multi_network/connection.h>
 #include <nest/multi_network/application_graph.h>
-#include "libnestutil/error.h"
+#include "error.h"
 
 namespace nest
 {

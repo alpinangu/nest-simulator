@@ -39,6 +39,7 @@
 
 
 #include "nest/multi_network/config.h"
+#include <nest/multi_network/port.h>
 
 #define MUSIC_DEFAULT_TIMEBASE 1e-9
 namespace nest
@@ -60,6 +61,11 @@ public:
   bool config (std::string var, bool* result);
 
   ContInputPort* publishContInput (std::string identifier);
+  ContOutputPort* publishContOutput (std::string identifier);
+  EventInputPort* publishEventInput (std::string identifier);
+  EventOutputPort* publishEventOutput (std::string identifier);
+  MessageInputPort* publishMessageInput (std::string identifier);
+  MessageOutputPort* publishMessageOutput (std::string identifier);
 
   //ContInputPort* publishContInput (std::string identifier);
 

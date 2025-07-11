@@ -87,4 +87,39 @@ Setup::config (std::string var, int* result)
     return setupInternal_->config(var, result);
   }
 
+  ContInputPort*
+  Setup::publishContInput (std::string identifier)
+  {
+    setupInternal_->publishContInput(identifier);
+  }
+
+  ContOutputPort*
+  Setup::publishContOutput (std::string identifier)
+  {
+    setupInternal_->publishContOutput(identifier);
+  }
+
+  EventInputPort*
+  Setup::publishEventInput (std::string identifier)
+  {
+    setupInternal_->publishEventInput(identifier);
+  }
+
+  EventOutputPort*
+  Setup::publishEventOutput (std::string identifier)
+  {
+    setupInternal_->publishEventOutput(identifier);
+  }
+
+  MessageInputPort*
+  Setup::publishMessageInput (std::string identifier)
+  {
+    setupInternal_->publishMessageInput(identifier);
+  }
+
+  MessageOutputPort*
+  Setup::publishMessageOutput (std::string identifier)
+  {
+    setupInternal_->publishMessageOutput(identifier);
+  }
 } // namespace nest

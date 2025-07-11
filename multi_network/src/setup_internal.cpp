@@ -236,5 +236,56 @@ fullInit ();
     }
 }
 
+ConnectivityInfo*
+SetupInternal::portConnectivity (const std::string localName)
+{
+    return manager_->connectivityMap ()->info (localName);
+}
+
+void SetupInternal::addPort (Port* p)
+{
+    ports_.push_back (p);
+}
+
+void SetupInternal::addConnection (Connection* c)
+{
+    connections_->push_back (c);
+}
+
+ContInputPort*
+SetupInternal::publishContInput (std::string identifier)
+{
+    return new ContInputPort (this, identifier);
+}
+
+ContOutputPort*
+SetupInternal::publishContOutput (std::string identifier)
+{
+    return new ContOutputPort (this, identifier);
+}
+
+EventInputPort*
+SetupInternal::publishEventInput (std::string identifier)
+{
+    return new EventInputPort (this, identifier);
+}
+
+EventOutputPort*
+SetupInternal::publishEventOutput (std::string identifier)
+{
+    return new EventOutputPort (this, identifier);
+}
+
+MessageInputPort*
+SetupInternal::publishMessageInput (std::string identifier)
+{
+    return new MessageInputPort (this, identifier);
+}
+
+  MessageOutputPort*
+  SetupInternal::publishMessageOutput (std::string identifier)
+  {
+    return new MessageOutputPort (this, identifier);
+  }
 
 } // namespace nest

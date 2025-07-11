@@ -41,7 +41,7 @@
 
 #include "nest/multi_network/setup.h"
 
-//#include <nest/multi_network/port.h>
+#include <nest/multi_network/port.h>
 
 #include <nest/multi_network/index_map.h>
 #include <nest/multi_network/linear_index.h>
@@ -82,12 +82,25 @@ public:
 
   void maybePostponedSetup();
 
+  ConnectivityInfo* portConnectivity (const std::string localName);
+  void addPort(Port* p);
+  void addConnection (Connection* c);
+
+  ContInputPort* publishContInput (std::string identifier);
+  EventInputPort* publishEventInput (std::string identifier);
+  ContOutputPort* publishContOutput (std::string identifier);
+  EventOutputPort* publishEventOutput (std::string identifier);
+  MessageInputPort* publishMessageInput (std::string identifier);
+  MessageOutputPort* publishMessageOutput (std::string identifier);
+
+
 private:
 
   bool launchedByMusic_;
   bool postponeSetup_;
   int color_;
 
+  std::vector<Port*> ports_;
   MultiNetworkManager* manager_;
   Setup& setup_; 
   double timebase_;
@@ -101,6 +114,7 @@ private:
 
   
   void errorChecks();
+
 
 };
 

@@ -24,6 +24,7 @@
 
 #include <string>
 
+#include "setup_internal.h"
 #include <nest/multi_network/data_map.h>
 #include <nest/multi_network/index_map.h>
 #include <nest/multi_network/event.h>
