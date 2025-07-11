@@ -81,9 +81,9 @@ set ( nestkernel_sources
       vp_manager.h vp_manager_impl.h vp_manager.cpp
       io_manager.h io_manager_impl.h io_manager.cpp
       mpi_manager.h mpi_manager_impl.h mpi_manager.cpp
-      #multi_network_manager.h multi_network_manager.cpp
-      #application_map.h application_map.cpp
-      #connectivity_map.h connectivity_map.cpp
+      multi_network_manager.h multi_network_manager.cpp
+      application_map.h application_map.cpp
+      connectivity_map.h connectivity_map.cpp
       simulation_manager.h simulation_manager.cpp
       connection_manager.h connection_manager_impl.h connection_manager.cpp
       sp_manager.h sp_manager_impl.h sp_manager.cpp
@@ -149,7 +149,7 @@ set_target_properties( nestkernel
     )
 
 target_link_libraries( nestkernel
-    nestutil sli_lib models multi_network
+    nestutil sli_lib models
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 
@@ -161,7 +161,6 @@ target_include_directories( nestkernel PRIVATE
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/nestkernel/spatial
-    ${PROJECT_SOURCE_DIR}/multi_network
     )
 
 FILTER_HEADERS("${nestkernel_sources}" install_headers )
