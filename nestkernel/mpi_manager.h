@@ -387,8 +387,8 @@ private:
   #ifdef TIMER_DETAILED
     // private stop watches for benchmarking purposes
     // (intended for internal core developers, not for use in the public API)
-    Stopwatch sw_communicate_spike_data_global_;
-    Stopwatch sw_communicate_spike_data_local_;
+    Stopwatch< StopwatchGranularity::Detailed > sw_communicate_spike_data_global_;
+    Stopwatch< StopwatchGranularity::Detailed > sw_communicate_spike_data_local_;
   #endif
 
 #endif /* #ifdef HAVE_MPI */
