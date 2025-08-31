@@ -70,7 +70,9 @@ void
 CycleTimeLog::to_dict( DictionaryDatum& events ) const
 {
   initialize_property_doublevector( events, names::times );
-  append_property( events, names::times, cycle_update_time_ );
+  //append_property( events, names::times, cycle_update_time_ );
+  initialize_property_doublevector( events, "cycle_update_time_" );
+  append_property( events, "cycle_update_time_", cycle_update_time_ );
 
   initialize_property_doublevector( events, "communicate_time" );
   append_property( events, "communicate_time", communicate_time_ );
