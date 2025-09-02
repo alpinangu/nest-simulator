@@ -1151,7 +1151,7 @@ nest::SimulationManager::update_()
           LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
           throw KernelException();
         }
-        start_current_update = end_current_update;
+        //start_current_update = end_current_update;
 
       } while ( to_do_ > 0 and not update_time_limit_exceeded and not exceptions_raised.at( tid ) );
 
