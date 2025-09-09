@@ -264,7 +264,6 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 
 #ifdef TIMER_DETAILED
-  def< double >( dict, names::time_synch_global, sw_synch_global_.elapsed() );
   def< double >( dict, names::time_communicate_spike_data_global, sw_communicate_spike_data_global_.elapsed() );
   def< double >( dict, names::time_communicate_spike_data_local, sw_communicate_spike_data_local_.elapsed() );
 #endif
@@ -312,7 +311,6 @@ void
 nest::MPIManager::reset_timers_for_mpi_communication()
 {
 #ifdef TIMER_DETAILED
-  sw_synch_global_.reset();
   sw_communicate_spike_data_global_.reset();
   sw_communicate_spike_data_local_.reset();
 #endif

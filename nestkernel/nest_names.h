@@ -663,7 +663,6 @@ extern const Name time_in_steps;
 extern const Name time_simulate;
 extern const Name time_simulate_cpu;
 extern const Name time_update;
-extern const Name time_synch_global;
 extern const Name time_update_cpu;
 extern const Name times;
 extern const Name to_do;
