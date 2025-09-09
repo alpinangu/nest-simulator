@@ -624,7 +624,6 @@ const Name time_gather_secondary_data_cpu( "time_gather_secondary_data_cpu" );
 const Name time_gather_spike_data( "time_gather_spike_data" );
 const Name time_gather_spike_data_cpu( "time_gather_spike_data_cpu" );
 const Name time_gather_target_data( "time_gather_target_data" );
-const Name time_synch_global( "time_synch_global" );
 const Name time_gather_target_data_cpu( "time_gather_target_data_cpu" );
 const Name time_omp_synchronization_construction( "time_omp_synchronization_construction" );
 const Name time_omp_synchronization_construction_cpu( "time_omp_synchronization_construction_cpu" );

@@ -387,7 +387,6 @@ private:
   #ifdef TIMER_DETAILED
     // private stop watches for benchmarking purposes
     // (intended for internal core developers, not for use in the public API)
-    Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_synch_global_;
     Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_spike_data_global_;
     Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_spike_data_local_;
   #endif
