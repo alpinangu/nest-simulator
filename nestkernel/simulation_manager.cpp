@@ -1125,7 +1125,7 @@ nest::SimulationManager::update_()
 
             const double 
 
-            const long end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+            long end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
             const long local_spike_counter = end_local_spike_counter - start_local_spike_counter;
             start_local_spike_counter = end_local_spike_counter;
 
