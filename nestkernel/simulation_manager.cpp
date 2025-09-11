@@ -487,7 +487,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   sw_deliver_secondary_data_.get_status(
     d, names::time_deliver_secondary_data, names::time_deliver_secondary_data_cpu );
 
-  #ifdef TIMER_DETAILED
+  #ifdef CYCLE_TIMERS
     DictionaryDatum log_events = DictionaryDatum( new Dictionary );
     ( *d )[ names::cycle_time_log ] = log_events;
     cycle_time_log_.to_dict( log_events );
@@ -520,7 +520,6 @@ nest::SimulationManager::prepare()
   // reset profiling timers
   reset_timers_for_dynamics();
   kernel().event_delivery_manager.reset_timers_for_dynamics();
-  kernel().mpi_manager.reset_timers_for_mpi_communication();
 
   t_real_ = 0;
   t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag
@@ -843,13 +842,18 @@ nest::SimulationManager::update_()
   long old_to_step;
 
   double start_current_update = sw_simulate_.elapsed();
+
   bool update_time_limit_exceeded = false;
 
-  double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
-  auto [ start_current_communicate_global, start_current_communicate_local, start_current_synch ] =
-    kernel().mpi_manager.get_sw_communicate();
+  #ifdef CYCLE_TIMERS
 
-  long start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+    double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
+
+    double start_current_synch = kernel().get_mpi_synchronization_stopwatch().elapsed();
+
+    long start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+
+  #endif 
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
@@ -1109,29 +1113,28 @@ nest::SimulationManager::update_()
           max_update_time_ = std::max( max_update_time_, update_time );
           start_current_update = end_current_update;
 
-          const double end_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
-          const double communicate_time = end_current_communicate - start_current_communicate;
-          start_current_communicate = end_current_communicate;
+          #ifdef CYCLE_TIMERS
 
-          auto [ end_current_communicate_global, end_current_communicate_local, end_current_synch ] =
-            kernel().mpi_manager.get_sw_communicate();
-          const double communicate_time_global = end_current_communicate_global - start_current_communicate_global;
-          const double communicate_time_local = end_current_communicate_local - start_current_communicate_local;
-          const double synch_time = end_current_synch - start_current_synch;
-          start_current_communicate_global = end_current_communicate_global;
-          start_current_communicate_local = end_current_communicate_local;
-          start_current_synch = end_current_synch;
+            const double end_current_synch = kernel().get_mpi_synchronization_stopwatch().elapsed();
+            const double synch_time = end_current_synch - start_current_synch;
+            start_current_synch = end_current_synch;
 
-          const long end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
-          const long local_spike_counter = end_local_spike_counter - start_local_spike_counter;
-          start_local_spike_counter = end_local_spike_counter;
+            const double end_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
+            const double communicate_time = end_current_communicate - start_current_communicate;
+            start_current_communicate = end_current_communicate;
 
-          cycle_time_log_.add_entry( update_time,
-            communicate_time,
-            communicate_time_global,
-            communicate_time_local,
-            synch_time,
-            local_spike_counter );
+            const double 
+
+            const long end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+            const long local_spike_counter = end_local_spike_counter - start_local_spike_counter;
+            start_local_spike_counter = end_local_spike_counter;
+
+            cycle_time_log_.add_entry( update_time,
+              communicate_time,
+              synch_time,
+              local_spike_counter );
+          
+          #endif
         }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier

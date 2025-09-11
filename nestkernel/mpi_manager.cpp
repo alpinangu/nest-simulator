@@ -213,8 +213,6 @@ nest::MPIManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     std::exit( 127 );
   }
 #endif
-  // reset timers for profiling
-  reset_timers_for_mpi_communication();
 }
 
 void
@@ -263,22 +261,8 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 
-#ifdef TIMER_DETAILED
-  def< double >( dict, names::time_communicate_spike_data_global, sw_communicate_spike_data_global_.elapsed() );
-  def< double >( dict, names::time_communicate_spike_data_local, sw_communicate_spike_data_local_.elapsed() );
-#endif
-
 }
 
-std::tuple< double, double, double >
-nest::MPIManager::get_sw_communicate()
-{
-#ifdef TIMER_DETAILED
-  return {
-    sw_communicate_spike_data_global_.elapsed(), sw_communicate_spike_data_local_.elapsed(), sw_synch_global_.elapsed()
-  };
-#endif
-}
 
 #ifdef HAVE_MPI
 
@@ -307,14 +291,6 @@ nest::MPIManager::mpi_finalize( int exitcode )
   }
 }
 
-void
-nest::MPIManager::reset_timers_for_mpi_communication()
-{
-#ifdef TIMER_DETAILED
-  sw_communicate_spike_data_global_.reset();
-  sw_communicate_spike_data_local_.reset();
-#endif
-}
 
 #else /* #ifdef HAVE_MPI */
 
@@ -795,9 +771,7 @@ nest::MPIManager::communicate_Allgather( std::vector< long >& buffer )
 void
 nest::MPIManager::communicate_Alltoall_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count )
 {
-  sw_communicate_spike_data_local_.start();
   MPI_Alltoall( send_buffer, send_recv_count, MPI_UNSIGNED, recv_buffer, send_recv_count, MPI_UNSIGNED, comm );
-  sw_communicate_spike_data_local_.stop();
 }
 
 void

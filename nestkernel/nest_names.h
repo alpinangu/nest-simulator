@@ -631,8 +631,6 @@ extern const Name tics_per_ms;
 extern const Name tics_per_step;
 extern const Name time_collocate_spike_data;
 extern const Name time_collocate_spike_data_cpu;
-extern const Name time_communicate_spike_data_global;
-extern const Name time_communicate_spike_data_local;
 extern const Name time_communicate_prepare;
 extern const Name time_communicate_prepare_cpu;
 extern const Name time_communicate_spike_data;

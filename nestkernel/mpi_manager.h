@@ -73,8 +73,6 @@ public:
 
   void init_mpi( int* argc, char** argv[] );
 
-  std::tuple< double, double, double > get_sw_communicate();
-
 #ifdef HAVE_MPI
   void set_communicator( MPI_Comm );
 
@@ -308,10 +306,6 @@ public:
 
   void communicate_recv_counts_secondary_events();
 
-  /**
-   * Set time measurements for internal profiling to zero (reg. sim. dyn.)
-   */
-  virtual void reset_timers_for_mpi_communication();
 
 private:
   int num_processes_;              //!< number of MPI processes
@@ -383,13 +377,6 @@ private:
   void communicate_Allgather( std::vector< T >& send_buffer,
     std::vector< T >& recv_buffer,
     std::vector< int >& displacements );
-
-  #ifdef TIMER_DETAILED
-    // private stop watches for benchmarking purposes
-    // (intended for internal core developers, not for use in the public API)
-    Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_spike_data_global_;
-    Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_spike_data_local_;
-  #endif
 
 #endif /* #ifdef HAVE_MPI */
 
