@@ -143,7 +143,7 @@ EventDeliveryManager::finalize( const bool )
 double
 EventDeliveryManager::get_sw_communicate_spike_data()
 {
-#ifdef TIMER_DETAILED
+#ifdef CYCLE_TIMERS
   return sw_communicate_spike_data_.elapsed();
 #endif
 }
