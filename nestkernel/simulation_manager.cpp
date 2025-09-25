@@ -1111,8 +1111,6 @@ nest::SimulationManager::update_()
           const double end_current_update = sw_simulate_.elapsed();
           const double update_time = end_current_update - start_current_update;
           start_current_update = end_current_update;
-
-          cycle_time_log_.add_entry( update_time );
     
           min_update_time_ = std::min( min_update_time_, update_time );
           max_update_time_ = std::max( max_update_time_, update_time );
