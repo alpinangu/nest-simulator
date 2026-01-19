@@ -152,6 +152,8 @@ target_link_libraries( nestkernel
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 
+target_link_libraries(nestkernel PUBLIC multi_network)
+
 target_include_directories( nestkernel 
   PUBLIC
     ${PROJECT_SOURCE_DIR}/multi_network_common
