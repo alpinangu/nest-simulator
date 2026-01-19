@@ -44,6 +44,8 @@ set(multi_network_sources
   src/event_router.cpp
   src/port.cpp
   src/spatial.cpp
+  src/runtime.cpp
+  src/permutation_index.cpp
   )
 
 add_library(multi_network SHARED ${multi_network_sources})
