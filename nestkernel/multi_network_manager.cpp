@@ -168,8 +168,6 @@ void
 MultiNetworkManager::set_application_map(const DictionaryDatum& dict)
 {
 
-    std::cout << "you are in the func" << std::endl;
-
     int appcounter = 0;
     for (auto it = dict->begin(); it != dict->end(); ++it)
     {
@@ -216,9 +214,6 @@ MultiNetworkManager::set_application_map(const DictionaryDatum& dict)
                 //TODO: HANDLE THIS WITH A LOG
                 exit(111);
             }
-            //??????
-            //should we add binary to the map to or assign color to binaries in a different map?
-            std::cout << "Application " << app_name << " with " << np << " has been added as color: " << appcounter << std::endl;
             application_map_.add(app_name, np, appcounter, app_dict);
 
             appcounter++;
@@ -445,12 +440,14 @@ MultiNetworkManager::writeEnv()
     setenv (configEnvVarName, env.str().c_str(), 1);
 
     //just for debugging:
-    if(get_rank() == app.leader())
-    {
+    //if(get_rank() == app.leader())
+    //{
+        std::cout << "Rank: " << get_rank() << std::endl;
         std::cout << "From the applicaton with color " << app_color_ << "/" << app.color() << "with rank(leader) " << app.leader() << std::endl;
         std::cout << env.str() << std::endl;
+        std::cout << " " << std::endl;
 
-    }
+    //}
 } 
 /*
 

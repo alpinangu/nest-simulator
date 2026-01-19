@@ -132,6 +132,7 @@ namespace nest
     env.ignore (); // delim
     applications_->read (env);
     env.ignore ();
+    //TODO: THIS LEADERS IS NOT NEEDED
     std::map<int, int> leaders = applications_->assignLeaders( Name ());
     connectivityMap_->read(env, leaders);
     // parse config string
