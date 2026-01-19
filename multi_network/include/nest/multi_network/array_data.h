@@ -20,7 +20,7 @@
 #ifndef ARRAY_DATA_H
 #define ARRAY_DATA_H
 
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 #include <nest/multi_network/data_map.h>
 
 namespace nest {

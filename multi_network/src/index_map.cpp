@@ -17,7 +17,7 @@
  */
 #include <limits>
 
-#include "nest/multi_network/index_map.h"
+#include <nest/multi_network/index_map.h>
 
 namespace nest {
 

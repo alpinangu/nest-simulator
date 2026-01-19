@@ -19,17 +19,14 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 
 namespace nest {
 
   // ClockState may be negative due to calculations in Synchronizer
   class ClockState {
-#ifdef HAVE_LONG_LONG
-    long long state;
-#else
-#error 64-bit clocks without long long not yet implemented
-#endif
+  long long state;
+
   public:
     ClockState () { }
     // The following operations should be defined in this header file

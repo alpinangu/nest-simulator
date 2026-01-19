@@ -18,13 +18,12 @@
 
 #ifndef PORT_H
 #define PORT_H
-#include "nest/multi_network/config.h"
-//#if MUSIC_USE_MPI
+
+//#include "music/music-config.hh"
 #include <mpi.h>
 
 #include <string>
 
-#include "setup_internal.h"
 #include <nest/multi_network/data_map.h>
 #include <nest/multi_network/index_map.h>
 #include <nest/multi_network/event.h>
@@ -32,7 +31,7 @@
 #include <nest/multi_network/connector.h>
 #include <nest/multi_network/sampler.h>
 #include <nest/multi_network/event_routing_map.h>
-#include "connectivity_map.h"
+#include <multi_network_common/connectivity.h>
 #include <nest/multi_network/spatial.h>
 
 namespace nest {
@@ -51,7 +50,7 @@ namespace nest {
   class Port {
   public:
     Port () { }
-    Port (SetupInternal* s, std::string identifier);
+    Port (Setup* s, std::string identifier);
 
     virtual void buildTable () { };
     virtual void setupCleanup () { };
@@ -64,9 +63,9 @@ namespace nest {
     IndexMap* indices_;
     Index::Type index_type_;
     std::string portName_;
-    SetupInternal* setup_;
-    ConnectivityInfo* ConnectivityInfo_;
-    virtual Connector* makeConnector (ConnectorInfo connInfo) = 0;
+    Setup* setup_;
+    nest::ConnectivityInfo* ConnectivityInfo_;
+    virtual Connector* makeConnector (nest::ConnectorInfo connInfo) = 0;
     void assertOutput ();
     void assertInput ();
 
@@ -121,11 +120,11 @@ namespace nest {
 			 public TickingPort {
     using OutputPort::mapImpl;
     void mapImpl (DataMap* indices, int maxBuffered);
-    Connector* makeConnector (ConnectorInfo connInfo);
+    Connector* makeConnector (nest::ConnectorInfo connInfo);
     friend class Implementer;
 
   public:
-    ContOutputPort (SetupInternal* s, std::string id)
+    ContOutputPort (Setup* s, std::string id)
       : Port (s, id) { }
     void map (DataMap* dmap);
     void map (DataMap* dmap, int maxBuffered);
@@ -138,11 +137,11 @@ namespace nest {
 		  double delay,
 		  int maxBuffered,
 		  bool interpolate);
-    Connector* makeConnector (ConnectorInfo connInfo);
+    Connector* makeConnector (nest::ConnectorInfo connInfo);
     friend class Implementer;
 
   public:
-    ContInputPort (SetupInternal* s, std::string id)
+    ContInputPort (Setup* s, std::string id)
       : Port (s, id) { }
     void map (DataMap* dmap, double delay = 0.0, bool interpolate = true);
     void map (DataMap* dmap, int maxBuffered, bool interpolate = true);
@@ -167,7 +166,7 @@ namespace nest {
     void map (IndexMap* indices, Index::Type type, int maxBuffered);
     void insertEvent (double t, GlobalIndex id);
     void insertEvent (double t, LocalIndex id);
-    EventOutputPort (SetupInternal* s, std::string id);
+    EventOutputPort (Setup* s, std::string id);
 
     using OutputPort::mapImpl;
     void mapImpl (IndexMap* indices,
@@ -181,9 +180,9 @@ namespace nest {
     ~EventOutputPort();
 
   private:
-    Connector* makeConnector (ConnectorInfo connInfo);
+    Connector* makeConnector (nest::ConnectorInfo connInfo);
     void buildTable ();
-    friend class SetupInternal;
+    friend class Setup;
     friend class Implementer;
   };
 /* remedius
@@ -213,7 +212,7 @@ namespace nest {
 	      EventHandlerLocalIndex* handleEvent,
 	      double accLatency,
 	      int maxBuffered);
-    EventInputPort (SetupInternal* s, std::string id);
+    EventInputPort (Setup* s, std::string id);
   protected:
     void mapImpl (IndexMap* indices,
 		  Index::Type type,
@@ -221,7 +220,7 @@ namespace nest {
 		  double accLatency,
 		  int maxBuffered);
 
-    Connector* makeConnector (ConnectorInfo connInfo);
+    Connector* makeConnector (nest::ConnectorInfo connInfo);
     // Facilities to support the C interface
   public:
     EventHandlerGlobalIndexProxy*
@@ -232,7 +231,7 @@ namespace nest {
     EventHandlerGlobalIndexProxy cEventHandlerGlobalIndex;
     EventHandlerLocalIndexProxy cEventHandlerLocalIndex;
 
-    friend class SetupInternal;
+    friend class Setup;
     friend class Implementer;
   };
 
@@ -241,21 +240,21 @@ namespace nest {
   protected:
     int rank_;
   public:
-    MessagePort (SetupInternal* s);
+    MessagePort (Setup* s);
   };
 
   class MessageOutputPort : public MessagePort,
 			    public OutputPort {
     std::vector<FIBO*> buffers; // one buffer per MessageOutputConnector
   public:
-    MessageOutputPort (SetupInternal* s, std::string id);
+    MessageOutputPort (Setup* s, std::string id);
     void map ();
     void map (int maxBuffered);
     void insertMessage (double t, void* msg, size_t size);
   protected:
     using OutputPort::mapImpl;
     void mapImpl (int maxBuffered);
-    Connector* makeConnector (ConnectorInfo connInfo);
+    Connector* makeConnector (nest::ConnectorInfo connInfo);
     friend class Implementer;
   };
 
@@ -263,7 +262,7 @@ namespace nest {
 			   public InputPort {
     MessageHandler* handleMessage_;
   public:
-    MessageInputPort (SetupInternal* s, std::string id);
+    MessageInputPort (Setup* s, std::string id);
     void map (MessageHandler* handler = 0, double accLatency = 0.0);
     void map (int maxBuffered);
     void map (double accLatency, int maxBuffered);
@@ -273,7 +272,7 @@ namespace nest {
     void mapImpl (MessageHandler* handleEvent,
 		  double accLatency,
 		  int maxBuffered);
-    Connector* makeConnector (ConnectorInfo connInfo);
+    Connector* makeConnector (nest::ConnectorInfo connInfo);
     friend class Implementer;
 
   public:
@@ -285,6 +284,4 @@ namespace nest {
 
 
 }
-//#endif
-
 #endif

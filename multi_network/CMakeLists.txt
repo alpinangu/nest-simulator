@@ -1,4 +1,4 @@
-# multi_network_manager/CMakeLists.txt
+# multi_network/CMakeLists.txt
 #
 # This file is part of NEST.
 #
@@ -18,65 +18,54 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-set(SRC  
-    src/array_data.cpp nest/multi_network/array_data.h
-    src/array_data.cpp nest/multi_network/array_data.h
-    src/BIFO.cpp nest/multi_network/BIFO.h
-    src/clock.cpp nest/multi_network/clock.h
-    src/collector.cpp nest/multi_network/collector.h
-    src/communication.cpp nest/multi_network/communication.h
-    src/config.cpp nest/multi_network/config.h
-    src/connection.cpp        nest/multi_network/connection.h
-    src/connector.cpp         nest/multi_network/connector.h
-    src/cont_data.cpp         nest/multi_network/cont_data.h
-    src/data_map.cpp          nest/multi_network/data_map.h
-    src/debug.cpp             nest/multi_network/debug.h
-    src/distributor.cpp       nest/multi_network/distributor.h
-    src/event_router.cpp      nest/multi_network/event_router.h
-    src/event_routing_map.cpp      nest/multi_network/event_routing_map.h
-    src/event.cpp             nest/multi_network/event.h
-    src/FIBO.cpp              nest/multi_network/FIBO.h
-    src/index_map_factory.cpp nest/multi_network/index_map_factory.h
-    src/index_map.cpp         nest/multi_network/index_map.h
-    src/interval_table.cpp    nest/multi_network/interval_table.h
-    src/interval_tree.cpp     nest/multi_network/interval_tree.h
-    src/interval.cpp          nest/multi_network/interval.h
-    src/linear_index.cpp      nest/multi_network/linear_index.h
-    src/message.cpp           nest/multi_network/message.h
-    src/mpi_utils.cpp         nest/multi_network/mpi_utils.h
-    src/ordered_ilist.cpp     nest/multi_network/ordered_ilist.h
-    src/parse.cpp             nest/multi_network/parse.h
-    src/port.cpp              nest/multi_network/port.h
-    src/sampler.cpp           nest/multi_network/sampler.h
-    src/setup.cpp             nest/multi_network/setup.h
-    src/spatial.cpp           nest/multi_network/spatial.h
-    src/subconnector.cpp      nest/multi_network/subconnector.h
-    src/temporal.cpp          nest/multi_network/temporal.h
-    )
+set(multi_network_sources
+  src/array_data.cpp
+  src/connection.cpp
+  src/event_routing_map.cpp
+  src/linear_index.cpp
+  src/sampler.cpp
+  src/subconnector.cpp
+  src/BIFO.cpp
+  src/connector.cpp
+  src/FIBO.cpp
+  src/mpi_utils.cpp
+  src/scheduler_agent.cpp
+  src/temporal.cpp
+  src/clock.cpp
+  src/distributor.cpp
+  src/index_map_factory.cpp
+  src/multibuffer.cpp
+  src/scheduler.cpp
+  src/collector.cpp
+  src/index_map.cpp
+  src/parse.cpp
+  src/setup.cpp
+  src/configuration.cpp
+  src/event_router.cpp
+  src/port.cpp
+  src/spatial.cpp
+  )
 
-add_library(multi_network SHARED ${SRC})
+add_library(multi_network SHARED ${multi_network_sources})
 
-target_include_directories(multi_network
-  PRIVATE
-    ${PROJECT_SOURCE_DIR}/nestkernel
-    ${PROJECT_SOURCE_DIR}/libnestutil
-    ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/sli
-
-  # << PUBLIC headers live in multi_network/include >>
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
+target_link_libraries(multi_network
+  PUBLIC  multi_network_common
+  PRIVATE ${MPI_CXX_LIBRARIES}
 )
 
+target_include_directories(multi_network
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/multi_network>
+)
 
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/nest
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/multi_network
+  FILES_MATCHING PATTERN "*.h"
+)
 
-    target_link_libraries(multi_network
-    PRIVATE nestutil)
-
-
-    install(
-      DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
-      DESTINATION include
-      FILES_MATCHING PATTERN "*.h"
+install(TARGETS multi_network
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )

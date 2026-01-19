@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "nest/multi_network/index_map_factory.h"
+#include <nest/multi_network/index_map_factory.h>
 #include <algorithm>
 namespace nest {
   

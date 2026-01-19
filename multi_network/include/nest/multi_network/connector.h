@@ -28,7 +28,7 @@
 #include <nest/multi_network/FIBO.h>
 #include <nest/multi_network/event.h>
 #include <nest/multi_network/spatial.h>
-#include <connectivity_map.h> //TODO: This is not a part of the shared library so how sohuld I include this
+#include <multi_network_common/connectivity.h>
 #include <nest/multi_network/sampler.h>
 #include <nest/multi_network/collector.h>
 #include <nest/multi_network/distributor.h>

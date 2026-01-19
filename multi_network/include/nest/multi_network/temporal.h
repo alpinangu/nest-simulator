@@ -16,25 +16,24 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MUSIC_TEMPORAL_HH
+#ifndef TEMPORAL_H
+#define TEMPORAL_H
 
-#include "nest/multi_network/config.h"
-//#if MUSIC_USE_MPI
+//#include "music/music-config.hh"
 #define MAX_BUFFERED_NO_VALUE -1
 #define DEFAULT_PACKET_SIZE 64000
 #define EVENT_FREQUENCY_ESTIMATE 10.0
 #define DEFAULT_MESSAGE_MAX_BUFFERED 10
-
 #include <nest/multi_network/debug.h>
 #include <nest/multi_network/clock.h>
 #include <nest/multi_network/connection.h>
 #include <nest/multi_network/application_graph.h>
-#include "error.h"
+#include <multi_network_common/error.h>
 
 namespace nest
 {
 
-  class SetupInternal;
+  class Setup;
 
   class ConnectionDescriptor
   {
@@ -99,7 +98,7 @@ namespace nest
   // with all other applications.
   class TemporalNegotiator
   {
-    SetupInternal* setup_;
+    Setup* setup_;
     MPI_Group groupWorld;
     MPI_Group applicationLeaders;
     MPI_Comm negotiationComm;
@@ -117,7 +116,7 @@ namespace nest
     TemporalNegotiationData* negotiationData;
 
   public:
-    TemporalNegotiator (SetupInternal* setup);
+    TemporalNegotiator (Setup* setup);
     ~TemporalNegotiator ();
     void
     negotiate (Clock& localTime, std::vector<Connection*>* connections);
@@ -166,6 +165,4 @@ namespace nest
     hasPeers ();
   };
 }
-//#endif
-#define MUSIC_TEMPORAL_HH
 #endif

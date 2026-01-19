@@ -26,7 +26,7 @@ extern "C" {
 #include <assert.h>
 }
 
-namespace MUSIC {
+namespace nest {
 
   template<class DataType>
   class OrderedIList {

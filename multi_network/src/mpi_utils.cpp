@@ -19,7 +19,7 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "nest/multi_network/mpi_utils.h"
+#include <nest/multi_network/mpi_utils.h>
 
 namespace nest {
 

@@ -17,7 +17,7 @@
  */
 
 
-#include "nest/multi_network/linear_index.h"
+#include <nest/multi_network/linear_index.h>
 
 namespace nest {
   

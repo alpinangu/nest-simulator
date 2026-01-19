@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "nest/multi_network/event.h"
-#include "nest/multi_network/event_router.h"
+#include <nest/multi_network/event.h>
+#include <nest/multi_network/event_router.h>
 
 #include <algorithm>
 #include <cassert>

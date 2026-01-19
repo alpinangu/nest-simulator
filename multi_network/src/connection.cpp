@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "nest/multi_network/connection.h"
+#include <nest/multi_network/connection.h>
 
 //#if MUSIC_USE_MPI
 

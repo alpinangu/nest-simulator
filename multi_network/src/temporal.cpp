@@ -16,17 +16,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "nest/multi_network/temporal.h"  // Must be included first on BG/L
+#include <nest/multi_network/temporal.h>  // Must be included first on BG/L
 //#define MUSIC_DEBUG
 
-//#if MUSIC_USE_MPI
 
-#include "setup_internal.h"
+#include <nest/multi_network/setup.h>
 
 namespace nest
 {
 
-  TemporalNegotiator::TemporalNegotiator (SetupInternal* setup) :
+  TemporalNegotiator::TemporalNegotiator (Setup* setup) :
       setup_ (setup), negotiationBuffer (NULL)
   {
     nApplications_ = setup_->applicationMap ()->size ();
@@ -89,7 +88,7 @@ namespace nest
   void
   TemporalNegotiator::createNegotiationCommunicator ()
   {
-    ApplicationMap* applicationMap = setup_->applicationMap ();
+    nest::ApplicationMap* applicationMap = setup_->applicationMap ();
     int* ranks = new int[nApplications_];
 
     for (int i = 0; i < nApplications_; ++i)
@@ -169,7 +168,7 @@ namespace nest
   TemporalNegotiator::findNodeColor (int leader)
   {
     int color = -1;
-    ApplicationMap* applicationMap = setup_->applicationMap ();
+    nest::ApplicationMap* applicationMap = setup_->applicationMap ();
     for (int i = 0; i < nApplications_; ++i)
       if (leader == (*applicationMap)[i].leader ())
         color = (*applicationMap)[i].color ();
@@ -500,4 +499,3 @@ namespace nest
     return nConnections_;
   }
 }
-//#endif

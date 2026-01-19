@@ -19,7 +19,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 //#if MUSIC_USE_MPI
 #include <nest/multi_network/connector.h>
 

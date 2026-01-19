@@ -19,7 +19,7 @@
 #ifndef SUBCONNECTOR_H
 #define SUBCONNECTOR_H
 
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 //#if MUSIC_USE_MPI
 #include <mpi.h>
 #include <iostream>

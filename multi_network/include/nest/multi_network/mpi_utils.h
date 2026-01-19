@@ -21,7 +21,7 @@
  */
 #ifndef MPI_UTILS_H
 #define MPI_UTILS_H
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 
 #include <mpi.h>
 

@@ -23,7 +23,7 @@
 #ifndef NEGOTIATOR_H
 #define NEGOTIATOR_H
 
-#include "nest/multi_network/config.h"
+//#include <nest/multi_network/config.h>
 
 #include <mpi.h>
 #include <vector>

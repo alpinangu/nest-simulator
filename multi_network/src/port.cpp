@@ -15,17 +15,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "nest/multi_network/port.h"
+#include <nest/multi_network/port.h>
 
-//#if MUSIC_USE_MPI
-#include "nest/multi_network/event_router.h"
+#include <nest/multi_network/event_router.h>
 
-#include "setup_internal.h" // Must be included first on BG/L
-#include "libnestutil/error.h"
+#include <nest/multi_network/setup.h> // Must be included first on BG/L
+#include <multi_network_common/error.h>
 
 namespace nest {
 
-  Port::Port (SetupInternal* s, std::string identifier)
+  Port::Port (Setup* s, std::string identifier)
     : portName_ (identifier), setup_ (s), isMapped_ (false)
   {
     s->maybePostponedSetup ();
@@ -37,7 +36,7 @@ namespace nest {
   bool
   Port::isConnected ()
   {
-    return ConnectivityInfo_ != Connectivity::NO_CONNECTIVITY;
+    return ConnectivityInfo_ != nest::Connectivity::NO_CONNECTIVITY;
   }
 
 
@@ -61,7 +60,7 @@ namespace nest {
 		     "OutputPort::map (...)",
 		     " for port " + portName_);
     checkConnected ("map");
-    if (ConnectivityInfo_->direction () != ConnectivityInfo::OUTPUT)
+    if (ConnectivityInfo_->direction () != nest::ConnectivityInfo::OUTPUT)
       {
 	std::ostringstream msg;
 	msg << "output port `" << ConnectivityInfo_->portName ()
@@ -78,7 +77,7 @@ namespace nest {
 		     "InputPort::map (...)",
 		     " for port " + portName_);
     checkConnected ("map");
-    if (ConnectivityInfo_->direction () != ConnectivityInfo::INPUT)
+    if (ConnectivityInfo_->direction () != nest::ConnectivityInfo::INPUT)
       {
 	std::ostringstream msg;
 	msg << "input port `" << ConnectivityInfo_->portName ()
@@ -92,7 +91,7 @@ namespace nest {
   Port::hasWidth ()
   {
     checkConnected ("ask for width of");
-    return ConnectivityInfo_->width () != ConnectivityInfo::NO_WIDTH;
+    return ConnectivityInfo_->width () != nest::ConnectivityInfo::NO_WIDTH;
   }
 
 
@@ -101,7 +100,7 @@ namespace nest {
   {
     checkConnected ("ask for width of");
     int w = ConnectivityInfo_->width ();
-    if (w == ConnectivityInfo::NO_WIDTH)
+    if (w == nest::ConnectivityInfo::NO_WIDTH)
       {
 	std::ostringstream msg;
 	msg << "width requested for port `" << ConnectivityInfo_->portName ()
@@ -153,11 +152,11 @@ namespace nest {
       maxBuffered -= 1;
 	
     // Retrieve info about all remote connectors of this port
-    PortConnectorInfo portConnections
+    nest::PortConnectorInfo portConnections
       = ConnectivityInfo_->connections ();
     indices_ = indices;
     index_type_ = type;
-    for (PortConnectorInfo::iterator info = portConnections.begin ();
+    for (nest::PortConnectorInfo::iterator info = portConnections.begin ();
 	 info != portConnections.end ();
 	 ++info)
       {
@@ -189,9 +188,9 @@ namespace nest {
       maxBuffered -= 1;
 	
     // Retrieve info about all remote connectors of this port
-    PortConnectorInfo portConnections
+    nest::PortConnectorInfo portConnections
       = ConnectivityInfo_->connections ();
-    PortConnectorInfo::iterator info = portConnections.begin ();
+    nest::PortConnectorInfo::iterator info = portConnections.begin ();
     indices_ = indices;
     index_type_ = type;
     Connector* connector = makeConnector (*info);
@@ -244,7 +243,7 @@ namespace nest {
 
 
   Connector*
-  ContOutputPort::makeConnector (ConnectorInfo connInfo)
+  ContOutputPort::makeConnector (nest::ConnectorInfo connInfo)
   {
 	  Connector * conn;
 	  if(connInfo.communicationType() ==  ConnectorInfo::POINTTOPOINT){
@@ -361,7 +360,7 @@ namespace nest {
    *
    ********************************************************************/
 
-  EventOutputPort::EventOutputPort (SetupInternal* s, std::string id)
+  EventOutputPort::EventOutputPort (Setup* s, std::string id)
     : Port (s, id), routingMap (new OutputRoutingMap () /* deleted in buildTable */)
   {
     /* remedius
@@ -495,7 +494,7 @@ namespace nest {
   }
 
 
-  EventInputPort::EventInputPort (SetupInternal* s, std::string id)
+  EventInputPort::EventInputPort (Setup* s, std::string id)
     : Port (s, id)
   {
 
@@ -630,13 +629,13 @@ namespace nest {
    *
    ********************************************************************/
 
-  MessagePort::MessagePort (SetupInternal* s)
+  MessagePort::MessagePort (Setup* s)
     : rank_ (mpi_get_rank (s->communicator ()))
   {
   }
   
   
-  MessageOutputPort::MessageOutputPort (SetupInternal* s, std::string id)
+  MessageOutputPort::MessageOutputPort (Setup* s, std::string id)
     : Port (s, id), MessagePort (s)
   {
   }
@@ -702,7 +701,7 @@ namespace nest {
   }
 
   
-  MessageInputPort::MessageInputPort (SetupInternal* s, std::string id)
+  MessageInputPort::MessageInputPort (Setup* s, std::string id)
     : Port (s, id), MessagePort (s)
   {
   }
@@ -818,4 +817,3 @@ namespace nest {
 
   
 }
-//#endif

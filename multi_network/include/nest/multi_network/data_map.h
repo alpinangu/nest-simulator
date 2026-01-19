@@ -19,7 +19,7 @@
 #ifndef DATA_MAP_H
 #define DATA_MAP_H
 
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 
 #include <mpi.h>
 

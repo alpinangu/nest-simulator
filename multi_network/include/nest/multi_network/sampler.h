@@ -21,7 +21,7 @@
 #ifndef SAMPLER_H
 #define SAMPLER_H
 
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 
 #include <nest/multi_network/data_map.h>
 

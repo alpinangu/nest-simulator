@@ -16,17 +16,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "nest/multi_network/sampler.h"
-#include "nest/multi_network/debug.h"
+#include <nest/multi_network/sampler.h>
+#include <nest/multi_network/debug.h>
 
 
 // array_data.hh needs to be included first since it causes inclusion
 // of mpi.h (in data_map.hh).  mpi.h must be included before other
 // header files on BG/L
-#include "nest/multi_network/array_data.h"
-#include "nest/multi_network/index_map_factory.h"
-#include "libnestutil/error.h"
-#include "nest/multi_network/mpi_utils.h"
+#include <nest/multi_network/array_data.h>
+#include <nest/multi_network/index_map_factory.h>
+#include <multi_network_common/error.h>
+#include <nest/multi_network/mpi_utils.h>
 
 #include <cstring>
 
@@ -193,7 +193,7 @@ namespace nest {
 	  interpolate (pos, iSize, interpolationCoefficient,
 		       static_cast<float*> (dataMap->base ()) + localIndex);
 	else
-	  error ("internal error in Sampler::interpolateTo");
+	  error("internal error in Sampler::interpolateTo");
 	pos += iSize;
       }    
   }

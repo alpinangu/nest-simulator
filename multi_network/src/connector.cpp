@@ -16,18 +16,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "nest/multi_network/connector.h"
+#include <nest/multi_network/connector.h>
 
-#include "nest/multi_network/debug.h"
+#include <nest/multi_network/debug.h>
 
 //#if MUSIC_USE_MPI //TODO: this?
 
 // connector.hh needs to be included first since it causes inclusion
 // of mpi.h (in data_map.hh).  mpi.h must be included before other
 // header files on BG/L
-#include "nest/multi_network/error.h"
-#include "nest/multi_network/communication.h"
-#include "nest/multi_network/event_router.h"
+#include <multi_network_common/error.h>
+#include <nest/multi_network/communication.h>
+#include <nest/multi_network/event_router.h>
 #include <cmath>
 #include <map>
 

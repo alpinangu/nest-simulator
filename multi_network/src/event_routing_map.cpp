@@ -19,8 +19,8 @@
 //#define MUSIC_DEBUG
 //#include "music/music-config.hh"
 
-#include "nest/multi_network/event_router.h"
-#include "nest/multi_network/event_routing_map.h"
+#include <nest/multi_network/event_router.h>
+#include <nest/multi_network/event_routing_map.h>
 
 namespace nest {
 

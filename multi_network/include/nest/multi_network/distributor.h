@@ -21,7 +21,7 @@
 #define DISTRIBUTOR_H
 
 
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 
 
 // data_map.hh needs to be included first since it includes mpi.h.

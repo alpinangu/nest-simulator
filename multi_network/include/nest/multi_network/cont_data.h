@@ -19,9 +19,9 @@
 #ifndef CONT_DATA_H
 #define CONT_DATA_H
 
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 //#if MUSIC_USE_MPI
-#include "nest/multi_network/data_map.h"
+#include <nest/multi_network/data_map.h>
 
 namespace nest {
 

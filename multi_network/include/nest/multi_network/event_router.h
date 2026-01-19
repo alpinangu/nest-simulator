@@ -22,7 +22,7 @@
 #include <map>
 #include <vector>
 
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 #include <nest/multi_network/FIBO.h>
 #include <nest/multi_network/index_map.h>
 #include <nest/multi_network/event.h>

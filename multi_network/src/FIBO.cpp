@@ -21,7 +21,7 @@
  */
 #include <cstring>
 #include <iostream>
-#include "nest/multi_network/FIBO.h"
+#include <nest/multi_network/FIBO.h>
 
 namespace nest {
 

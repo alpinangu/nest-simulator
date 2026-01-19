@@ -23,7 +23,7 @@
 
 #ifndef FIBO_H
 #define FIBO_H
-#include "nest/multi_network/config.h"
+//#include "nest/multi_network/config.h"
 #include <vector>
 
 namespace nest {

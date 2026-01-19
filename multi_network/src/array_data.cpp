@@ -19,10 +19,10 @@
 // This header file needs to be included first since array_data.hh
 // includes <mpi.h> which musy be included first on BG/L
 
-#include "nest/multi_network/array_data.h"
+#include <nest/multi_network/array_data.h>
 
 
-#include "nest/multi_network/linear_index.h"
+#include <nest/multi_network/linear_index.h>
 
 namespace nest {
   

@@ -30,9 +30,9 @@
 #include "manager_interface.h"
 
 
-// Includes from nestkernel:
-#include "application_map.h"
-#include "connectivity_map.h"
+// Includes from multi_network_common:
+#include <multi_network_common/application_map.h>
+#include <multi_network_common/connectivity.h>
 
 // Includes from sli:
 #include "tokenutils.h"

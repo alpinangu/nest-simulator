@@ -48,7 +48,7 @@ namespace nest {
   };
 
   // support printed representation
-  std::ostream&
+  inline std::ostream&
   operator<< (std::ostream& os, const Interval& ival)
   {
     os << "[" << ival.begin () << ", " << ival.end () << ")";

@@ -16,16 +16,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "nest/multi_network/spatial.h" // Must be included first on BG/Ls
+#include <nest/multi_network/spatial.h> // Must be included first on BG/Ls
 
-//#include "music/debug.hh"
+#include <nest/multi_network/debug.h>
 
 
 #include <sstream>
 
-#include "nest/multi_network/error.h"
-#include "nest/multi_network/communication.h"
-#include "nest/multi_network/connector.h" // used only for debugging
+//common
+#include <multi_network_common/error.h>
+#include <nest/multi_network/communication.h>
+#include <nest/multi_network/connector.h> // used only for debugging
 
 namespace nest {
 
@@ -604,4 +605,4 @@ namespace nest {
   }
 
 }
-#endif
+

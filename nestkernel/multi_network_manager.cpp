@@ -29,15 +29,13 @@
 #include <unistd.h>
 #include <variant>
 
-// Includes from libnestutil:
-#include "error.h"
-
 // Includes from nestkernel:
-#include "connectivity_map.h"
 #include "token.h" 
 
-//Includes from multi_network
-#include "ioutils.h"
+//Includes from multi_network_commong
+#include <multi_network_common/ioutils.h>
+#include <multi_network_common/connectivity.h>
+#include <multi_network_common/error.h>
 
 
 namespace nest
@@ -488,6 +486,7 @@ MultiNetworkManager::get_rank()
     return rank;
 }
 
+/*
 void
 MultiNetworkManager::parse(std::string configStr)
 {
@@ -516,7 +515,7 @@ MultiNetworkManager::parse(std::string configStr)
     }
 
 }
-
+*/
 
 
 ApplicationMap*
