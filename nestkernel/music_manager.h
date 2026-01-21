@@ -26,7 +26,8 @@
 #include "config.h"
 
 #ifdef HAVE_MUSIC
-#include <music.hh>
+//#include <music.hh>
+#include <nest/multi_network.h>
 #endif
 #include <string>
 
@@ -78,10 +79,11 @@ public:
   void music_finalize(); // called from MPIManager::mpi_finalize
 
 #ifdef HAVE_MUSIC
-  MPI::Intracomm communicator();
-
-  MUSIC::Setup* get_music_setup();
-  MUSIC::Runtime* get_music_runtime();
+  MPI_Comm communicator();
+  //a: MUSIC::
+  nest_mn::Setup* get_music_setup();
+  //a: MUSIC::
+  nest_mn::Runtime* get_music_runtime();
 
   /**
    * Register a MUSIC input port (portname) with the port list.
@@ -173,8 +175,10 @@ public:
 
 private:
 #ifdef HAVE_MUSIC
-  MUSIC::Setup* music_setup;     //!< pointer to a MUSIC setup object
-  MUSIC::Runtime* music_runtime; //!< pointer to a MUSIC runtime object
+  //a: MUSIC::
+  nest_mn::Setup* music_setup;     //!< pointer to a MUSIC setup object
+  //a: MUSIC::
+  nest_mn::Runtime* music_runtime; //!< pointer to a MUSIC runtime object
 #endif
 };
 }

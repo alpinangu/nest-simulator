@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MULTIBUFFER_H
-#define MULTIBUFFER_H
+#ifndef MN_MULTIBUFFER_H
+#define MN_MULTIBUFFER_H
 
 #define MUSIC_TWOSTAGE_ALLGATHER
 
@@ -33,7 +33,7 @@
 
 
 
-namespace nest {
+namespace nest_mn {
 
   class Updateable {
   public:

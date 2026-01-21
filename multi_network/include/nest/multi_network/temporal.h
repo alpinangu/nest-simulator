@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TEMPORAL_H
-#define TEMPORAL_H
+#ifndef MN_TEMPORAL_H
+#define MN_TEMPORAL_H
 
 //#include "music/music-config.hh"
 #define MAX_BUFFERED_NO_VALUE -1
@@ -30,7 +30,7 @@
 #include <nest/multi_network/application_graph.h>
 #include <multi_network_common/error.h>
 
-namespace nest
+namespace nest_mn
 {
 
   class Setup;

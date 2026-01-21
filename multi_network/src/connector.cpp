@@ -31,7 +31,7 @@
 #include <cmath>
 #include <map>
 
-namespace nest {
+namespace nest_mn {
   std::map<unsigned int, Connector*> Connector::flagMap_;
 
   unsigned int Connector::nextFlag_ = 1;

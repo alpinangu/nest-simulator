@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RUNTIME_H
-#define RUNTIME_H
+#ifndef MN_RUNTIME_H
+#define MN_RUNTIME_H
 
 //#define MUSIC_DEBUG
 //#include "music/music-config.hh"
@@ -31,7 +31,7 @@
 #include <nest/multi_network/connector.h>
 #include <nest/multi_network/scheduler.h>
 #include <nest/multi_network/scheduler_agent.h>
-namespace nest
+namespace nest_mn
 {
 
   /*

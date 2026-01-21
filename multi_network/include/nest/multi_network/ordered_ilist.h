@@ -17,8 +17,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ORDERED_ILIST_H
-#define ORDERED_ILIST_H
+#ifndef MN_ORDERED_ILIST_H
+#define MN_ORDERED_ILIST_H
 
 #include <vector>
 
@@ -26,7 +26,7 @@ extern "C" {
 #include <assert.h>
 }
 
-namespace nest {
+namespace nest_mn {
 
   template<class DataType>
   class OrderedIList {
@@ -257,4 +257,4 @@ namespace nest {
 } // namespace
 
 
-#endif /* ORDERED_ILIST_H */
+#endif /* MN_ORDERED_ILIST_H */

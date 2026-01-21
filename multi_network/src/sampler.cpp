@@ -32,7 +32,7 @@
 
 
 
-namespace nest {
+namespace nest_mn {
 
   Sampler::Sampler ()
     : dataMap_ (0), interpolationDataMap_ (0)

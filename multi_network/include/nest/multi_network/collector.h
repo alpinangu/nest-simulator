@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COLLECTOR_H
-#define COLLECTOR_H
+#ifndef MN_COLLECTOR_H
+#define MN_COLLECTOR_H
 
 //#include "nest/multi_network/config.h"
 
@@ -32,7 +32,7 @@
 #include <nest/multi_network/BIFO.h>
 #include <nest/multi_network/interval_tree.h>
 
-namespace nest {
+namespace nest_mn {
 
   /**
    * The Collector is responsible for collecting data from a set of
@@ -41,7 +41,7 @@ namespace nest {
    */
   class Collector {
   public: //for BG compiler
-    class Interval : public nest::Interval {
+    class Interval : public nest_mn::Interval {
     public:
       Interval (IndexInterval& interval);
       bool operator< (const Interval& ref) const
@@ -53,7 +53,7 @@ namespace nest {
       void setLength (int length) { setEnd (length); }
     };
 private:
-    class IntervalCalculator : public IntervalTree<int, nest::Interval, int>::Action {
+    class IntervalCalculator : public IntervalTree<int, nest_mn::Interval, int>::Action {
       Interval& interval_;
       int elementSize_;
     public:
@@ -69,7 +69,7 @@ private:
     int maxsize_;
     BufferMap buffers;
 
-    IntervalTree<int, nest::Interval, int>* buildTree ();
+    IntervalTree<int, nest_mn::Interval, int>* buildTree ();
   public:
     // caller manages deallocation but guarantees existence
     /* remedius
@@ -85,4 +85,4 @@ private:
 } // namespace
 
 //#endif /* HAVE_MPI */
-#endif /* COLLECTOR_H */
+#endif /* MN_COLLECTOR_H */

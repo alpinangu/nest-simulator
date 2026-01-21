@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef MN_CONNECTION_H
+#define MN_CONNECTION_H
 
 //#include "nest/multi_network/config.h"
 //#if MUSIC_USE_MPI
 #include <nest/multi_network/connector.h>
 
-namespace nest {
+namespace nest_mn {
   /*
    * The Connection class carries the extra information needed for
    * setting up connectors and subconnectors during spatial and

@@ -29,7 +29,7 @@
 #include <string>
 #include <ostream>
 
-namespace nest
+namespace nest_mn
 {
 
 class ConnectorInfo

@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INDEX_MAP_FACTORY_H
-#define INDEX_MAP_FACTORY_H
+#ifndef MN_INDEX_MAP_FACTORY_H
+#define MN_INDEX_MAP_FACTORY_H
 
 #include <vector>
 
 #include <nest/multi_network/index_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   class IndexMapFactory : public IndexMap {
     std::vector<IndexInterval> indices_;
@@ -57,4 +57,4 @@ namespace nest {
 } // namespace
 
 //#endif /* HAVE_MPI */
-#endif /* INDEX_MAP_FACTORY_H */
+#endif /* MN_INDEX_MAP_FACTORY_H */

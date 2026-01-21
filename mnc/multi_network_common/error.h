@@ -27,7 +27,7 @@
 #include <sstream>
 #include <string>
 
-namespace nest {
+namespace nest_mn {
 
   void error ();
   void hang ();

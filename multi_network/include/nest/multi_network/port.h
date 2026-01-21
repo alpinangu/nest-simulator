@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PORT_H
-#define PORT_H
+#ifndef MN_PORT_H
+#define MN_PORT_H
 
 //#include "music/music-config.hh"
 #include <mpi.h>
@@ -34,7 +34,7 @@
 #include <multi_network_common/connectivity.h>
 #include <nest/multi_network/spatial.h>
 
-namespace nest {
+namespace nest_mn {
 
   class Setup;
 /* remedius
@@ -64,8 +64,8 @@ namespace nest {
     Index::Type index_type_;
     std::string portName_;
     Setup* setup_;
-    nest::ConnectivityInfo* ConnectivityInfo_;
-    virtual Connector* makeConnector (nest::ConnectorInfo connInfo) = 0;
+    nest_mn::ConnectivityInfo* ConnectivityInfo_;
+    virtual Connector* makeConnector (nest_mn::ConnectorInfo connInfo) = 0;
     void assertOutput ();
     void assertInput ();
 
@@ -120,7 +120,7 @@ namespace nest {
 			 public TickingPort {
     using OutputPort::mapImpl;
     void mapImpl (DataMap* indices, int maxBuffered);
-    Connector* makeConnector (nest::ConnectorInfo connInfo);
+    Connector* makeConnector (nest_mn::ConnectorInfo connInfo);
     friend class Implementer;
 
   public:
@@ -137,7 +137,7 @@ namespace nest {
 		  double delay,
 		  int maxBuffered,
 		  bool interpolate);
-    Connector* makeConnector (nest::ConnectorInfo connInfo);
+    Connector* makeConnector (nest_mn::ConnectorInfo connInfo);
     friend class Implementer;
 
   public:
@@ -180,7 +180,7 @@ namespace nest {
     ~EventOutputPort();
 
   private:
-    Connector* makeConnector (nest::ConnectorInfo connInfo);
+    Connector* makeConnector (nest_mn::ConnectorInfo connInfo);
     void buildTable ();
     friend class Setup;
     friend class Implementer;
@@ -220,7 +220,7 @@ namespace nest {
 		  double accLatency,
 		  int maxBuffered);
 
-    Connector* makeConnector (nest::ConnectorInfo connInfo);
+    Connector* makeConnector (nest_mn::ConnectorInfo connInfo);
     // Facilities to support the C interface
   public:
     EventHandlerGlobalIndexProxy*
@@ -254,7 +254,7 @@ namespace nest {
   protected:
     using OutputPort::mapImpl;
     void mapImpl (int maxBuffered);
-    Connector* makeConnector (nest::ConnectorInfo connInfo);
+    Connector* makeConnector (nest_mn::ConnectorInfo connInfo);
     friend class Implementer;
   };
 
@@ -272,7 +272,7 @@ namespace nest {
     void mapImpl (MessageHandler* handleEvent,
 		  double accLatency,
 		  int maxBuffered);
-    Connector* makeConnector (nest::ConnectorInfo connInfo);
+    Connector* makeConnector (nest_mn::ConnectorInfo connInfo);
     friend class Implementer;
 
   public:

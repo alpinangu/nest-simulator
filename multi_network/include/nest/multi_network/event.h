@@ -21,13 +21,13 @@
  */
 
 
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef MN_EVENT_H
+#define MN_EVENT_H
 
 
 #include <nest/multi_network/index_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   class Event {
   public:
@@ -105,4 +105,4 @@ namespace nest {
 } // namespace
 
 
-#endif /* EVENT_H */
+#endif /* MN_EVENT_H */

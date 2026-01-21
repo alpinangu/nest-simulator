@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONT_DATA_H
-#define CONT_DATA_H
+#ifndef MN_CONT_DATA_H
+#define MN_CONT_DATA_H
 
 //#include "nest/multi_network/config.h"
 //#if MUSIC_USE_MPI
 #include <nest/multi_network/data_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   class ContData : public DataMap {
   public:

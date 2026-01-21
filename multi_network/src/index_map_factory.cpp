@@ -18,7 +18,7 @@
 
 #include <nest/multi_network/index_map_factory.h>
 #include <algorithm>
-namespace nest {
+namespace nest_mn {
   
   IndexMapFactory::IndexMapFactory ()
   {

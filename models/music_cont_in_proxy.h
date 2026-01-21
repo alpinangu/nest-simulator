@@ -35,7 +35,7 @@
 #include <vector>
 
 // External includes:
-#include <music.hh>
+#include <nest/multi_network.h>
 
 // Includes from nestkernel:
 #include "device_node.h"
@@ -166,7 +166,7 @@ private:
 
   struct Variables_
   {
-    MUSIC::ContInputPort* MP_; //!< The MUSIC cont port for input of data
+    nest_mn::ContInputPort* MP_; //!< The MUSIC cont port for input of data
   };
 
   // ------------------------------------------------------------

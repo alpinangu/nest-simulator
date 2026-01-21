@@ -146,7 +146,7 @@ nest::music_rate_out_proxy::pre_run_hook()
   // only publish the output port once,
   if ( not S_.published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    nest_mn::Setup* s = kernel().music_manager.get_music_setup();
 
     if ( s == 0 )
     {
@@ -169,7 +169,7 @@ nest::music_rate_out_proxy::pre_run_hook()
 
     // check, if there are connections to receiver ports, which are
     // beyond the width of the port
-    std::vector< MUSIC::GlobalIndex >::const_iterator it;
+    std::vector< nest_mn::GlobalIndex >::const_iterator it;
     for ( it = V_.index_map_.begin(); it != V_.index_map_.end(); ++it )
     {
       if ( *it > S_.port_width_ )
@@ -182,8 +182,8 @@ nest::music_rate_out_proxy::pre_run_hook()
     B_.data_.resize( S_.port_width_ );
 
 
-    MUSIC::ArrayData* dmap =
-      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, 0, S_.port_width_ );
+    nest_mn::ArrayData* dmap =
+      new nest_mn::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI_DOUBLE, 0, S_.port_width_ );
 
 
     // Setup an array map
@@ -207,7 +207,7 @@ nest::music_rate_out_proxy::get_status( DictionaryDatum& d ) const
 
   // make a copy, since MUSIC uses int instead of long int
   std::vector< long >* pInd_map_long = new std::vector< long >( V_.index_map_.size() );
-  std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator, std::vector< long >::iterator >(
+  std::copy< std::vector< nest_mn::GlobalIndex >::const_iterator, std::vector< long >::iterator >(
     V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long->begin() );
 
   ( *d )[ names::index_map ] = IntVectorDatum( pInd_map_long );

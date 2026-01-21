@@ -284,7 +284,7 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
         return;
     }
 
-    for (std::vector<ApplicationInfo>::iterator app = application_map_.begin(); app != application_map_.end(); ++app)
+    for (std::vector<nest_mn::ApplicationInfo>::iterator app = application_map_.begin(); app != application_map_.end(); ++app)
     {
         connectivityMap_[app->name()];
     }
@@ -294,7 +294,7 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
     int nextPortCode = 0;
 
     //Ittarates the apps, because we need a different map for each app
-    for(std::map<std::string, Connectivity>::iterator app = connectivityMap_.begin(); app != connectivityMap_.end(); ++app)
+    for(std::map<std::string, nest_mn::Connectivity>::iterator app = connectivityMap_.begin(); app != connectivityMap_.end(); ++app)
     {
 
         //Itterates the connections
@@ -365,7 +365,7 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
 
                 if(width == -1)
                 {
-                    width = ConnectivityInfo::NO_WIDTH;
+                    width = nest_mn::ConnectivityInfo::NO_WIDTH;
                 }
 
                 // Generate a unique "port code" for each receiver port
@@ -383,16 +383,16 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
                 else
                     portCode = pos->second;
                 
-                ConnectivityInfo::PortDirection dir;
-                ApplicationInfo* remoteInfo;
+                nest_mn::ConnectivityInfo::PortDirection dir;
+                nest_mn::ApplicationInfo* remoteInfo;
                 if(app->first == senderAppName)
                 {
-                    dir = ConnectivityInfo::OUTPUT;
+                    dir = nest_mn::ConnectivityInfo::OUTPUT;
                     remoteInfo = application_map_.lookup (receiverAppName);
                 }
                 else if(app->first == receiverAppName)
                 {
-                    dir = ConnectivityInfo::INPUT;
+                    dir = nest_mn::ConnectivityInfo::INPUT;
                     remoteInfo = application_map_.lookup(senderAppName);
                 }
                 else
@@ -400,19 +400,19 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
                 
                 int iCommType;
                 if (commType.length () == 0 || commType == "point-to-point")
-                    iCommType = ConnectorInfo::POINTTOPOINT;
+                    iCommType = nest_mn::ConnectorInfo::POINTTOPOINT;
                 else
-                    iCommType = ConnectorInfo::COLLECTIVE;
+                    iCommType = nest_mn::ConnectorInfo::COLLECTIVE;
 
                 int iProcMethod;
                 if (procMethod.length () == 0 || procMethod == "tree")
-                    iProcMethod = ConnectorInfo::TREE;
+                    iProcMethod = nest_mn::ConnectorInfo::TREE;
                 else
-                    iProcMethod = ConnectorInfo::TABLE;
+                    iProcMethod = nest_mn::ConnectorInfo::TABLE;
 
                 //leader is always 0
                 app->second.add (
-                dir == ConnectivityInfo::OUTPUT ? senderPortName : receiverPortName,
+                dir == nest_mn::ConnectivityInfo::OUTPUT ? senderPortName : receiverPortName,
                 dir, width, receiverAppName, receiverPortName, portCode, remoteInfo->leader(),
                 remoteInfo->nProc (), iCommType, iProcMethod);
 
@@ -428,7 +428,7 @@ void
 MultiNetworkManager::writeEnv()
 {
     //std::ostringstream env;
-    const ApplicationInfo& app = application_map_.appAt(app_color_);
+    const nest_mn::ApplicationInfo& app = application_map_.appAt(app_color_);
     std::ostringstream env;
 
     env << app.name() << ':'<< app.color() << ':';
@@ -515,7 +515,7 @@ MultiNetworkManager::parse(std::string configStr)
 */
 
 
-ApplicationMap*
+nest_mn::ApplicationMap*
 MultiNetworkManager::applications ()
 {
     return &application_map_;
@@ -531,7 +531,7 @@ MultiNetworkManager::Color()
 int
 MultiNetworkManager::Leader()
 {
-ApplicationInfo* info = application_map_.lookup (app_name_);
+nest_mn::ApplicationInfo* info = application_map_.lookup (app_name_);
     return info == 0 ? -1 : info->leader ();
 }
 
@@ -554,7 +554,7 @@ MultiNetworkManager::lookup(std::string name, int* result)
     std::ostringstream oss;
     oss << "var " << name << " given wrong type (" << *temp
 	<< "; expected int) in config file";
-    error(oss.str());
+    nest_mn::error(oss.str());
     return true; // Doesn't happen! Just for compiler!
 
 
@@ -577,7 +577,7 @@ MultiNetworkManager::lookup(std::string name, double* result)
     std::ostringstream oss;
     oss << "var " << name << " given wrong type (" << *temp
     << "; expected double) in config file";
-    error(oss.str());
+    nest_mn::error(oss.str());
     return true; // Doesn't happen! Just for compiler!
 }
 
@@ -594,7 +594,7 @@ MultiNetworkManager::lookup (std::string name, bool* result)
     std::ostringstream oss;
     oss << "var " << name << " given wrong type (" << *temp
     << "; expected bool) in config file";
-    error(oss.str ());
+    nest_mn::error(oss.str ());
     return true; // Doesn't happen! Just for compiler!
 }
 

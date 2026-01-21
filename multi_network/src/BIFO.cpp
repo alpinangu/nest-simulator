@@ -24,7 +24,7 @@
 #include <cstring>
 #include <multi_network_common/error.h>
 
-namespace nest {
+namespace nest_mn {
 
   void
   BIFO::configure (int elementSize, int maxBlockSize)

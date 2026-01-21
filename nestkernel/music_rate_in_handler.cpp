@@ -83,7 +83,8 @@ MusicRateInHandler::publish_port()
 
   if ( not published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    //a: MUSIC::
+    nest_mn::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
     {
       throw MUSICSimulationHasRun( "" );
@@ -109,8 +110,8 @@ MusicRateInHandler::publish_port()
     {
       *it = 0;
     }
-
-    MUSIC::ArrayData data_map( static_cast< void* >( &( data_[ 0 ] ) ), MPI::DOUBLE, 0, port_width_ );
+    //a: MUSIC::
+    nest_mn::ArrayData data_map( static_cast< void* >( &( data_[ 0 ] ) ), MPI_DOUBLE, 0, port_width_ );
 
     MP_->map( &data_map );
     published_ = true;

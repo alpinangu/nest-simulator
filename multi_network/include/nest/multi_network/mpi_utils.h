@@ -19,13 +19,13 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef MPI_UTILS_H
-#define MPI_UTILS_H
+#ifndef MN_MPI_UTILS_H
+#define MN_MPI_UTILS_H
 //#include "nest/multi_network/config.h"
 
 #include <mpi.h>
 
-namespace nest
+namespace nest_mn
 {
   bool mpi_is_initialized ();
   int mpi_get_rank (MPI_Comm comm);
@@ -36,4 +36,4 @@ namespace nest
 } // namespace
 
 //#endif /* HAVE_MPI */
-#endif /* MPI_UTILS_H */
+#endif /* MN_MPI_UTILS_H */

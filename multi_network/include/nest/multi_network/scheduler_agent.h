@@ -1,11 +1,11 @@
-#ifndef SCHEDULER_AGENT_H
-#define SCHEDULER_AGENT_H
+#ifndef MN_SCHEDULER_AGENT_H
+#define MN_SCHEDULER_AGENT_H
 
 //#include "music/music-config.hh"
 #include <nest/multi_network/scheduler.h>
 #include <nest/multi_network/multibuffer.h>
 
-namespace nest
+namespace nest_mn
 {
   class Scheduler;
   typedef std::pair<Scheduler::SConnection, Scheduler::SConnData> SConnectionP;

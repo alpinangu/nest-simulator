@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef INDEX_MAP_H
-#define INDEX_MAP_H
+#ifndef MN_INDEX_MAP_H
+#define MN_INDEX_MAP_H
 
 #include <memory>
 
 #include <nest/multi_network/interval.h>
 
-namespace nest {
+namespace nest_mn {
 
   class Index {
   public:
@@ -116,4 +116,4 @@ namespace nest {
 
 } // namespace
 
-#endif /* INDEX_MAP_H */
+#endif /* MN_INDEX_MAP_H */

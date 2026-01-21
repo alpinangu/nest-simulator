@@ -18,7 +18,7 @@
 #include <nest/multi_network/permutation_index.h>
 #include <algorithm>
 
-namespace nest {
+namespace nest_mn {
   
   PermutationIndex::PermutationIndex (GlobalIndex* indices, int size)
   {

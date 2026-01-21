@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SUBCONNECTOR_H
-#define SUBCONNECTOR_H
+#ifndef MN_SUBCONNECTOR_H
+#define MN_SUBCONNECTOR_H
 
 //#include "nest/multi_network/config.h"
 //#if MUSIC_USE_MPI
@@ -33,7 +33,7 @@
 #include <nest/multi_network/message.h>
 #include <nest/multi_network/mpi_utils.h>
 
-namespace nest {
+namespace nest_mn {
 
   // NOTE: Must be divisible by the size of the datatype of the data
   // maps passed to cont ports
@@ -374,4 +374,4 @@ namespace nest {
 
 }
 //#endif USEMPI
-#endif /* SUBCONNECTOR_H */
+#endif /* MN_SUBCONNECTOR_H */

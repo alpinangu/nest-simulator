@@ -133,7 +133,7 @@ nest::music_cont_in_proxy::pre_run_hook()
   // only publish the port once
   if ( not S_.published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    nest_mn::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
     {
       throw MUSICSimulationHasRun( get_name() );
@@ -154,7 +154,7 @@ nest::music_cont_in_proxy::pre_run_hook()
     S_.port_width_ = V_.MP_->width();
 
     B_.data_ = std::vector< double >( S_.port_width_ );
-    MUSIC::ArrayData data_map( static_cast< void* >( &( B_.data_[ 0 ] ) ), MPI::DOUBLE, 0, S_.port_width_ );
+    nest_mn::ArrayData data_map( static_cast< void* >( &( B_.data_[ 0 ] ) ), MPI_DOUBLE, 0, S_.port_width_ );
 
     V_.MP_->map( &data_map );
     S_.published_ = true;

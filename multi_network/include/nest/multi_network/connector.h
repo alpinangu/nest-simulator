@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONNECTOR_H
-#define CONNECTOR_H
+#ifndef MN_CONNECTOR_H
+#define MN_CONNECTOR_H
 
 
 
@@ -36,7 +36,7 @@
 #include <nest/multi_network/clock.h>
 #include <nest/multi_network/subconnector.h>
 
-namespace nest {
+namespace nest_mn {
   /* remedius
    * New type of Connector was introduced: CollectiveConnector.
    * So that Connector class hierarchy undergoes the following changes:
@@ -634,4 +634,4 @@ namespace nest {
 }
 
 
-#endif /* CONNECTOR_H */
+#endif /* MN_CONNECTOR_H */

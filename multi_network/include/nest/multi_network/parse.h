@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PARSE_H
-#define PARSE_H
+#ifndef MN_PARSE_H
+#define MN_PARSE_H
 
 #include <string>
 #include <vector>
 #include <istream>
 
-namespace nest {
+namespace nest_mn {
   
   class Parser {
     //a: private by default

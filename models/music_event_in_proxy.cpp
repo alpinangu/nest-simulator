@@ -25,7 +25,7 @@
 #ifdef HAVE_MUSIC
 
 // External includes:
-#include <music.hh>
+#include <nest/multi_network.h>
 
 // Includes from sli:
 #include "arraydatum.h"

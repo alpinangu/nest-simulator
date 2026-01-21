@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NEGOTIATOR_H
-#define NEGOTIATOR_H
+#ifndef MN_NEGOTIATOR_H
+#define MN_NEGOTIATOR_H
 
 //#include <nest/multi_network/config.h>
 
@@ -31,7 +31,7 @@
 
 #include <nest/multi_network/index_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   class SpatialNegotiationData {
     IndexInterval interval_;
@@ -198,4 +198,4 @@ namespace nest {
 } // namespace
 
 //#endif /* HAVE_MPI */
-#endif /* SPATIAL_H */
+#endif /* MN_SPATIAL_H */

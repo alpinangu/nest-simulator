@@ -23,8 +23,9 @@
  * due to different data types needed for processing events on the receiver and sender sides.
  */
 
-#ifndef EVENT_ROUTINGMAP_H
-#define EVENT_ROUTINGMAP_H
+#ifndef MN_EVENT_ROUTINGMAP_H
+#define MN_EVENT_ROUTINGMAP_H
+
 
 #include <map>
 #include <vector>
@@ -33,7 +34,7 @@
 #include <nest/multi_network/index_map.h>
 #include <nest/multi_network/event.h>
 
-namespace nest {
+namespace nest_mn {
 
   class EventRouter;
 
@@ -127,4 +128,4 @@ namespace nest {
   };
 } // namespace
 
-#endif /* EVENT_ROUTINGMAP_H */
+#endif /* MN_EVENT_ROUTINGMAP_H */

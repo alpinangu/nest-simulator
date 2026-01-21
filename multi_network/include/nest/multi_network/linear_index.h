@@ -16,13 +16,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LINEAR_INDEX_H
-#define LINEAR_INDEX_H
+#ifndef MN_LINEAR_INDEX_H
+#define MN_LINEAR_INDEX_H
 
 
 #include <nest/multi_network/index_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   /*
    * This index map is part of the MUSIC API and documented
@@ -56,4 +56,4 @@ namespace nest {
 } // namespace
 
 
-#endif /* LINEAR_INDEX_H */
+#endif /* MN_LINEAR_INDEX_H */

@@ -18,14 +18,14 @@
 
 // NOTE: rename to Interpolator?
 
-#ifndef SAMPLER_H
-#define SAMPLER_H
+#ifndef MN_SAMPLER_H
+#define MN_SAMPLER_H
 
 //#include "nest/multi_network/config.h"
 
 #include <nest/multi_network/data_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   class Sampler {
     DataMap* dataMap_;
@@ -66,4 +66,4 @@ namespace nest {
 } // namespace
 
 
-#endif /* SAMPLER_H */
+#endif /* MN_SAMPLER_H */

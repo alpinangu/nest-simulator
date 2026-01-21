@@ -29,7 +29,8 @@
 #ifdef HAVE_MUSIC
 
 // C++ includes:
-#include <music.hh>
+//#include <music.hh>
+#include <nest/multi_network.h>
 #include <queue>
 
 // Includes from nestkernel:
@@ -71,7 +72,8 @@ public:
   void update( Time const&, const long, const long );
 
 private:
-  MUSIC::ContInputPort* MP_;   //!< The MUSIC rate port for input of data
+//a: MUSIC::
+  nest_mn::ContInputPort* MP_;   //!< The MUSIC rate port for input of data
   std::vector< double > data_; //!< The buffer for incoming data
 
   bool published_;

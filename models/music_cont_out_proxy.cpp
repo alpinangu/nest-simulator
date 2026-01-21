@@ -244,7 +244,7 @@ nest::music_cont_out_proxy::pre_run_hook()
   if ( S_.published_ == false )
   {
     const size_t synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
-    std::vector< MUSIC::GlobalIndex > music_index_map;
+    std::vector< nest_mn::GlobalIndex > music_index_map;
 
     DictionaryDatum dummy_params = new Dictionary();
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
@@ -261,13 +261,13 @@ nest::music_cont_out_proxy::pre_run_hook()
       }
     }
 
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    nest_mn::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
     {
       throw MUSICSimulationHasRun( get_name() );
     }
 
-    MUSIC::ContOutputPort* MP = s->publishContOutput( P_.port_name_ );
+    nest_mn::ContOutputPort* MP = s->publishContOutput( P_.port_name_ );
 
     if ( MP->isConnected() == false )
     {
@@ -292,11 +292,11 @@ nest::music_cont_out_proxy::pre_run_hook()
     }
 
     // The permutation index map, contains global_index[local_index]
-    MUSIC::PermutationIndex* music_perm_ind =
-      new MUSIC::PermutationIndex( &music_index_map.front(), music_index_map.size() );
+    nest_mn::PermutationIndex* music_perm_ind =
+      new nest_mn::PermutationIndex( &music_index_map.front(), music_index_map.size() );
 
-    MUSIC::ArrayData* dmap =
-      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, music_perm_ind );
+    nest_mn::ArrayData* dmap =
+      new nest_mn::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI_DOUBLE, music_perm_ind );
 
     // Setup an array map
     MP->map( dmap );

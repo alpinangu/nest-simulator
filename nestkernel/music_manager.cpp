@@ -73,7 +73,8 @@ void
 MUSICManager::init_music( int* argc, char** argv[] )
 {
   int provided_thread_level;
-  music_setup = new MUSIC::Setup( *argc, *argv, MPI_THREAD_FUNNELED, &provided_thread_level );
+  //a: MUSIC::
+  music_setup = new nest_mn::Setup( *argc, *argv, MPI_THREAD_FUNNELED, &provided_thread_level );
 }
 
 void
@@ -88,7 +89,8 @@ MUSICManager::enter_runtime( double h_min_delay )
   // std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
   if ( music_runtime == 0 )
   {
-    music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );
+    //a: MUSIC::
+    music_runtime = new nest_mn::Runtime( music_setup, h_min_delay * 1e-3 );
   }
 }
 
@@ -114,7 +116,8 @@ MUSICManager::music_finalize()
   {
     // we need a Runtime object to call finalize(), so we create
     // one, if we don't have one already
-    music_runtime = new MUSIC::Runtime( music_setup, 1e-3 );
+    //a: MUSIC::
+    music_runtime = new nest_mn::Runtime( music_setup, 1e-3 );
   }
 
   music_runtime->finalize();
@@ -128,19 +131,21 @@ MUSICManager::music_finalize()
 
 #ifdef HAVE_MUSIC
 
-MPI::Intracomm
+MPI_Comm
 MUSICManager::communicator()
 {
   return music_setup->communicator();
 }
 
-MUSIC::Setup*
+//a: MUSIC::
+nest_mn::Setup*
 MUSICManager::get_music_setup()
 {
   return music_setup;
 }
 
-MUSIC::Runtime*
+//a: MUSIC::
+nest_mn::Runtime*
 MUSICManager::get_music_runtime()
 {
   return music_runtime;

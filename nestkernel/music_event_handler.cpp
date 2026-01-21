@@ -118,7 +118,8 @@ MusicEventHandler::publish_port()
     }
 
     // create the permutation index mapping
-    music_perm_ind_ = new MUSIC::PermutationIndex( &indexmap_.front(), indexmap_.size() );
+    //a: MUSIC::
+    music_perm_ind_ = new nest_mn::PermutationIndex( &indexmap_.front(), indexmap_.size() );
     // map the port
     if ( max_buffered_ >= 0 )
     {
@@ -141,9 +142,9 @@ MusicEventHandler::publish_port()
     LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
-
+//a: MUSIC::
 void
-MusicEventHandler::operator()( double t, MUSIC::GlobalIndex channel )
+MusicEventHandler::operator()( double t, nest_mn::GlobalIndex channel )
 {
   assert( channelmap_[ channel ] != 0 );
   eventqueue_[ channel ].push( t * 1e3 ); // MUSIC uses seconds as time unit

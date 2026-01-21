@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DATA_MAP_H
-#define DATA_MAP_H
+#ifndef MN_DATA_MAP_H
+#define MN_DATA_MAP_H
 
 //#include "nest/multi_network/config.h"
 
@@ -25,7 +25,7 @@
 
 #include <nest/multi_network/index_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   typedef char ContDataT;
 

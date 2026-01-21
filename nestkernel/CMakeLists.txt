@@ -149,10 +149,10 @@ set_target_properties( nestkernel
 target_link_libraries( nestkernel
     nestutil sli_lib models
     multi_network_common
-    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
+    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 
-target_link_libraries(nestkernel PUBLIC multi_network)
+target_link_libraries(nestkernel multi_network)
 
 target_include_directories( nestkernel 
   PUBLIC

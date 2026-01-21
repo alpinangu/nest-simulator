@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EVENT_ROUTER_H
-#define EVENT_ROUTER_H
+#ifndef MN_EVENT_ROUTER_H
+#define MN_EVENT_ROUTER_H
 
 #include <map>
 #include <vector>
@@ -33,7 +33,7 @@
 //#define MUSIC_ITABLE_COMPRESSED
 #include <nest/multi_network/interval_table.h>
 
-namespace nest {
+namespace nest_mn {
   /* remedius
    * Since the router can act as on the output (point-to-point communication)
    * as well as on the input (collective communication) sides and
@@ -252,4 +252,4 @@ namespace nest {
 
 } // namespace
 
-#endif /* EVENT_ROUTER_H */
+#endif /* MN_EVENT_ROUTER_H */

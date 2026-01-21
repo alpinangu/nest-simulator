@@ -30,7 +30,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-namespace nest {
+namespace nest_mn {
 
   void
   error ()

@@ -69,7 +69,7 @@ public:
   static const char* const configEnvVarName;
 
 
-  ApplicationMap* applications();
+  nest_mn::ApplicationMap* applications();
 
   int Color();
 
@@ -80,7 +80,7 @@ public:
   bool lookup(std::string name, std::string* result);
   bool lookup (std::string name, bool* result);
 
-  Connectivity*
+  nest_mn::Connectivity*
   connectivityMap ()
   {
     return &connectivityMap_[app_name_];
@@ -89,8 +89,8 @@ public:
 
 private:
 
-  ApplicationMap application_map_;
-  std::map<std::string, Connectivity> connectivityMap_;
+  nest_mn::ApplicationMap application_map_;
+  std::map<std::string, nest_mn::Connectivity> connectivityMap_;
   int app_color_;
   std::string app_name_;
 

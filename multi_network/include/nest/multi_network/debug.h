@@ -15,10 +15,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef MULTI_NETWORK_DEBUG_H
-#define MULTI_NETWORK_DEBUG_H
+#ifndef MN_DEBUG_H
+#define MN_DEBUG_H
 
-#ifdef MULTI_NETWORK_DEBUG
+#ifdef MN_DEBUG
 
 #include <iostream>
 

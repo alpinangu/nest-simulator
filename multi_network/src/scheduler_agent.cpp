@@ -29,7 +29,7 @@
 #include <cstdlib>
 #endif
 
-namespace nest
+namespace nest_mn
 {
   SchedulerAgent::SchedulerAgent (Scheduler *scheduler) :
       scheduler_ (scheduler)
@@ -255,7 +255,7 @@ namespace nest
 #endif
 
   bool
-  MulticommAgent::tick (nest::Clock &localTime)
+  MulticommAgent::tick (nest_mn::Clock &localTime)
   {
     std::vector<MultiCommObject>::iterator comm;
     bool continue_;

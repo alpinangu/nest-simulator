@@ -31,7 +31,7 @@
 #include <cstdlib>
 #endif
 
-namespace nest
+namespace nest_mn
 {
 
   Scheduler::Scheduler (MPI_Comm comm, int leader) :

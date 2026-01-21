@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#ifndef MN_CONFIGURATION_H
+#define MN_CONFIGURATION_H
 
 //#include "music/music-config.hh"
 
@@ -27,7 +27,7 @@
 #include <multi_network_common/application_map.h>
 #include <multi_network_common/connectivity.h>
 
-namespace nest 
+namespace nest_mn 
 {
 
   class Configuration {

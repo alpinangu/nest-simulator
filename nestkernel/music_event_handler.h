@@ -29,7 +29,8 @@
 #ifdef HAVE_MUSIC
 
 // C++ includes:
-#include <music.hh>
+//#include <music.hh>
+#include <nest/multi_network.h>
 #include <queue>
 
 // Includes from nestkernel:
@@ -43,7 +44,8 @@ namespace nest
 /**
  * Event handler for all events of a MUSIC port received on this process.
  */
-class MusicEventHandler : public MUSIC::EventHandlerGlobalIndex
+//a: MUSIC::
+class MusicEventHandler : public nest_mn::EventHandlerGlobalIndex
 {
 public:
   MusicEventHandler();
@@ -70,7 +72,8 @@ public:
    * This function only queues the events. Delivery to the
    * targets takes place in update().
    */
-  void operator()( double t, MUSIC::GlobalIndex channel );
+  //a: MUSIC::
+  void operator()( double t, nest_mn::GlobalIndex channel );
 
   /**
    * This function is called by the scheduler and delivers the queued
@@ -79,14 +82,17 @@ public:
   void update( Time const&, const long, const long );
 
 private:
-  MUSIC::EventInputPort* music_port_;
-  MUSIC::PermutationIndex* music_perm_ind_;
+  //a: MUSIC::
+  nest_mn::EventInputPort* music_port_;
+  //a: MUSIC::
+  nest_mn::PermutationIndex* music_perm_ind_;
   bool published_;
   std::string portname_;
   //! Maps channel number to music_event_in_proxy
   std::vector< nest::Node* > channelmap_;
   //! Maps local index to global MUSIC index (channel)
-  std::vector< MUSIC::GlobalIndex > indexmap_;
+  //a: MUSIC::
+  std::vector< nest_mn::GlobalIndex > indexmap_;
   double acceptable_latency_; //!< The acceptable latency of the port in ms
   int max_buffered_;
 

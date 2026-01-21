@@ -19,7 +19,7 @@
 
 //#if MUSIC_USE_MPI
 
-namespace nest {
+namespace nest_mn {
 
   OutputConnection::OutputConnection (Connector* connector,
 				      int maxBuffered,

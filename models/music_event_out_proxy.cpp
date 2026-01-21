@@ -137,7 +137,7 @@ nest::music_event_out_proxy::pre_run_hook()
   // only publish the output port once,
   if ( not S_.published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    nest_mn::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
     {
       throw MUSICSimulationHasRun( get_name() );
@@ -159,7 +159,7 @@ nest::music_event_out_proxy::pre_run_hook()
 
     // check, if there are connections to receiver ports, which are
     // beyond the width of the port
-    std::vector< MUSIC::GlobalIndex >::const_iterator it;
+    std::vector< nest_mn::GlobalIndex >::const_iterator it;
     for ( it = V_.index_map_.begin(); it != V_.index_map_.end(); ++it )
     {
       if ( *it > S_.port_width_ )
@@ -169,10 +169,10 @@ nest::music_event_out_proxy::pre_run_hook()
     }
 
     // The permutation index map, contains global_index[local_index]
-    V_.music_perm_ind_ = new MUSIC::PermutationIndex( &V_.index_map_.front(), V_.index_map_.size() );
+    V_.music_perm_ind_ = new nest_mn::PermutationIndex( &V_.index_map_.front(), V_.index_map_.size() );
 
     // we identify channels by global indices within NEST
-    V_.MP_->map( V_.music_perm_ind_, MUSIC::Index::GLOBAL );
+    V_.MP_->map( V_.music_perm_ind_, nest_mn::Index::GLOBAL );
 
     S_.published_ = true;
 
@@ -191,7 +191,7 @@ nest::music_event_out_proxy::get_status( DictionaryDatum& d ) const
 
   // make a copy, since MUSIC uses int instead of long int
   std::vector< long >* pInd_map_long = new std::vector< long >( V_.index_map_.size() );
-  std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator, std::vector< long >::iterator >(
+  std::copy< std::vector< nest_mn::GlobalIndex >::const_iterator, std::vector< long >::iterator >(
     V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long->begin() );
 
   ( *d )[ names::index_map ] = IntVectorDatum( pInd_map_long );
@@ -226,7 +226,7 @@ nest::music_event_out_proxy::handle( SpikeEvent& e )
 #endif
     for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
-      V_.MP_->insertEvent( time, MUSIC::GlobalIndex( receiver_port ) );
+      V_.MP_->insertEvent( time, nest_mn::GlobalIndex( receiver_port ) );
     }
 #ifdef _OPENMP
   }

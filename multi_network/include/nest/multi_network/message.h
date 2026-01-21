@@ -16,12 +16,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef MN_MESSAGE_H
+#define MN_MESSAGE_H
 
 #include <nest/multi_network/index_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   class MessageHeader {
   public:
@@ -74,4 +74,4 @@ namespace nest {
 
 }
 
-#endif /* MESSAGE_H */
+#endif /* MN_MESSAGE_H */

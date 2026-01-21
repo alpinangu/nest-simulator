@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef APPLICATION_GRAPH_H
-#define APPLICATION_GRAPH_H
+#ifndef MN_APPLICATION_GRAPH_H
+#define MN_APPLICATION_GRAPH_H
 
 #include <assert.h>
 #include <vector>
 #include <cstddef>
 
-namespace nest
+namespace nest_mn
 {
   template<typename NodeData, typename EdgeData>
     class ANode;
@@ -393,4 +393,4 @@ namespace nest
     };
 }
 
-#endif /* APPLICATION_GRAPH_H */
+#endif /* MN_APPLICATION_GRAPH_H */

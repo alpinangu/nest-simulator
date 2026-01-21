@@ -22,7 +22,7 @@
 #include <nest/multi_network/setup.h> // Must be included first on BG/L
 #include <multi_network_common/error.h>
 
-namespace nest {
+namespace nest_mn {
 
   Port::Port (Setup* s, std::string identifier)
     : portName_ (identifier), setup_ (s), isMapped_ (false)
@@ -36,7 +36,7 @@ namespace nest {
   bool
   Port::isConnected ()
   {
-    return ConnectivityInfo_ != nest::Connectivity::NO_CONNECTIVITY;
+    return ConnectivityInfo_ != nest_mn::Connectivity::NO_CONNECTIVITY;
   }
 
 
@@ -60,7 +60,7 @@ namespace nest {
 		     "OutputPort::map (...)",
 		     " for port " + portName_);
     checkConnected ("map");
-    if (ConnectivityInfo_->direction () != nest::ConnectivityInfo::OUTPUT)
+    if (ConnectivityInfo_->direction () != nest_mn::ConnectivityInfo::OUTPUT)
       {
 	std::ostringstream msg;
 	msg << "output port `" << ConnectivityInfo_->portName ()
@@ -77,7 +77,7 @@ namespace nest {
 		     "InputPort::map (...)",
 		     " for port " + portName_);
     checkConnected ("map");
-    if (ConnectivityInfo_->direction () != nest::ConnectivityInfo::INPUT)
+    if (ConnectivityInfo_->direction () != nest_mn::ConnectivityInfo::INPUT)
       {
 	std::ostringstream msg;
 	msg << "input port `" << ConnectivityInfo_->portName ()
@@ -91,7 +91,7 @@ namespace nest {
   Port::hasWidth ()
   {
     checkConnected ("ask for width of");
-    return ConnectivityInfo_->width () != nest::ConnectivityInfo::NO_WIDTH;
+    return ConnectivityInfo_->width () != nest_mn::ConnectivityInfo::NO_WIDTH;
   }
 
 
@@ -100,7 +100,7 @@ namespace nest {
   {
     checkConnected ("ask for width of");
     int w = ConnectivityInfo_->width ();
-    if (w == nest::ConnectivityInfo::NO_WIDTH)
+    if (w == nest_mn::ConnectivityInfo::NO_WIDTH)
       {
 	std::ostringstream msg;
 	msg << "width requested for port `" << ConnectivityInfo_->portName ()
@@ -152,11 +152,11 @@ namespace nest {
       maxBuffered -= 1;
 	
     // Retrieve info about all remote connectors of this port
-    nest::PortConnectorInfo portConnections
+    nest_mn::PortConnectorInfo portConnections
       = ConnectivityInfo_->connections ();
     indices_ = indices;
     index_type_ = type;
-    for (nest::PortConnectorInfo::iterator info = portConnections.begin ();
+    for (nest_mn::PortConnectorInfo::iterator info = portConnections.begin ();
 	 info != portConnections.end ();
 	 ++info)
       {
@@ -188,9 +188,9 @@ namespace nest {
       maxBuffered -= 1;
 	
     // Retrieve info about all remote connectors of this port
-    nest::PortConnectorInfo portConnections
+    nest_mn::PortConnectorInfo portConnections
       = ConnectivityInfo_->connections ();
-    nest::PortConnectorInfo::iterator info = portConnections.begin ();
+    nest_mn::PortConnectorInfo::iterator info = portConnections.begin ();
     indices_ = indices;
     index_type_ = type;
     Connector* connector = makeConnector (*info);
@@ -243,7 +243,7 @@ namespace nest {
 
 
   Connector*
-  ContOutputPort::makeConnector (nest::ConnectorInfo connInfo)
+  ContOutputPort::makeConnector (nest_mn::ConnectorInfo connInfo)
   {
 	  Connector * conn;
 	  if(connInfo.communicationType() ==  ConnectorInfo::POINTTOPOINT){

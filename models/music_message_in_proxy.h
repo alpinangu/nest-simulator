@@ -39,7 +39,7 @@
 #include "dict_util.h"
 
 // External includes:
-#include <music.hh>
+#include <nest/multi_network.h>
 
 // Includes from nestkernel:
 #include "device_node.h"
@@ -105,7 +105,7 @@ Examples using this model
 
 EndUserDocs */
 
-class MsgHandler : public MUSIC::MessageHandler
+class MsgHandler : public nest_mn::MessageHandler
 {
   ArrayDatum messages;                 //!< The buffer for incoming message
   std::vector< double > message_times; //!< The buffer for incoming message
@@ -215,7 +215,7 @@ private:
 
   struct Variables_
   {
-    MUSIC::MessageInputPort* MP_; //!< The MUSIC cont port for input of data
+    nest_mn::MessageInputPort* MP_; //!< The MUSIC cont port for input of data
   };
 
   // ------------------------------------------------------------

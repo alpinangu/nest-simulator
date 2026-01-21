@@ -21,12 +21,12 @@
  */
 
 
-#ifndef FIBO_H
-#define FIBO_H
+#ifndef MN_FIBO_H
+#define MN_FIBO_H
 //#include "nest/multi_network/config.h"
 #include <vector>
 
-namespace nest {
+namespace nest_mn {
 
   class FIBO {
   private:
@@ -55,4 +55,4 @@ namespace nest {
   
   
 }
-#endif /* FIBO.H */
+#endif /* MN_FIBO.H */

@@ -33,7 +33,7 @@
 #include <set>
 #include <cassert>
 
-namespace nest
+namespace nest_mn
 {
 
   bool Runtime::isInstantiated_ = false;

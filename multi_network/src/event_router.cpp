@@ -23,7 +23,7 @@
 #include <cassert>
 #include <cstring>
 
-namespace nest {
+namespace nest_mn {
 
   OutputRoutingData::OutputRoutingData (const IndexInterval &i, FIBO* b) : EventRoutingData(i), buffer_ (b)
   {

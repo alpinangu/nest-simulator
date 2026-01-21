@@ -17,8 +17,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INTERVAL_TABLE_H
-#define INTERVAL_TABLE_H
+#ifndef MN_INTERVAL_TABLE_H
+#define MN_INTERVAL_TABLE_H
 /*
  * The interval table implementation can be adjusted by defining the
  * preprocessor macro ITABLE_FLAVOR to one of the following:
@@ -55,7 +55,7 @@ extern "C" {
 
 #include <nest/multi_network/ordered_ilist.h>
 
-namespace nest {
+namespace nest_mn {
 
   template<class PointType, class IntervalType, class DataType>
   class IntervalTable {
@@ -381,4 +381,4 @@ namespace nest {
 } // namespace
 
 
-#endif /* INTERVAL_TABLE_H */
+#endif /* MN_INTERVAL_TABLE_H */

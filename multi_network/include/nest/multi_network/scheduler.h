@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SCHEDULER_H
-#define SCHEDULER_H
+#ifndef MN_SCHEDULER_H
+#define MN_SCHEDULER_H
 
 //#include "music/music-config.hh"
 
@@ -29,7 +29,7 @@
 #include <nest/multi_network/multibuffer.h>
 #include <multi_network_common/application_map.h>
 #include <nest/multi_network/temporal.h>
-namespace nest
+namespace nest_mn
 {
 
 // The Scheduler is responsible for the timing involved in

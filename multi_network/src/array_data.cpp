@@ -24,7 +24,7 @@
 
 #include <nest/multi_network/linear_index.h>
 
-namespace nest {
+namespace nest_mn {
   
   ArrayData::ArrayData (void* buffer, MPI_Datatype type, IndexMap* map)
     : DataMap (buffer), type_ (type), indexMap_ (map->copy ())

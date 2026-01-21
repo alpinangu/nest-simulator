@@ -17,13 +17,13 @@
  */
 
 
-#ifndef ARRAY_DATA_H
-#define ARRAY_DATA_H
+#ifndef MN_ARRAY_DATA_H
+#define MN_ARRAY_DATA_H
 
 //#include "nest/multi_network/config.h"
 #include <nest/multi_network/data_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   /*
    * This data map is part of the MUSIC API and documented
@@ -45,4 +45,4 @@ namespace nest {
 } // namespace
 
 //#endif /* HAVE_MPI */
-#endif /* ARRAY_DATA_H */
+#endif /* MN_ARRAY_DATA_H */

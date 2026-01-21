@@ -23,7 +23,7 @@
 #include <iostream>
 #include <nest/multi_network/FIBO.h>
 
-namespace nest {
+namespace nest_mn {
 
   FIBO::FIBO (int es)
   {

@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BIFO_H
-#define BIFO_H
+#ifndef MN_BIFO_H
+#define MN_BIFO_H
 
 //#include "nest/multi_network/config.h"
 
@@ -25,7 +25,7 @@
 
 #include <nest/multi_network/FIBO.h>
 
-namespace nest {
+namespace nest_mn {
 
   class BIFO {
   private:
@@ -65,4 +65,4 @@ namespace nest {
   
 } // namespace
 
-#endif /* BIFO_H */
+#endif /* MN_BIFO_H */

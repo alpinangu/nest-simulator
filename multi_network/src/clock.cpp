@@ -17,7 +17,7 @@
  */
 #include <nest/multi_network/clock.h>
 
-namespace nest {
+namespace nest_mn {
 
   ClockState::ClockState (double t, double tb)
   {

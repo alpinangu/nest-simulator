@@ -22,7 +22,7 @@
 
 #include <nest/multi_network/setup.h>
 
-namespace nest
+namespace nest_mn
 {
 
   TemporalNegotiator::TemporalNegotiator (Setup* setup) :
@@ -88,7 +88,7 @@ namespace nest
   void
   TemporalNegotiator::createNegotiationCommunicator ()
   {
-    nest::ApplicationMap* applicationMap = setup_->applicationMap ();
+    nest_mn::ApplicationMap* applicationMap = setup_->applicationMap ();
     int* ranks = new int[nApplications_];
 
     for (int i = 0; i < nApplications_; ++i)
@@ -168,7 +168,7 @@ namespace nest
   TemporalNegotiator::findNodeColor (int leader)
   {
     int color = -1;
-    nest::ApplicationMap* applicationMap = setup_->applicationMap ();
+    nest_mn::ApplicationMap* applicationMap = setup_->applicationMap ();
     for (int i = 0; i < nApplications_; ++i)
       if (leader == (*applicationMap)[i].leader ())
         color = (*applicationMap)[i].color ();

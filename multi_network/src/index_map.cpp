@@ -19,7 +19,7 @@
 
 #include <nest/multi_network/index_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   int Index::WILDCARD_MAX = std::numeric_limits<int>::max ();
 

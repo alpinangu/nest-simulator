@@ -19,7 +19,7 @@
 
 #include <nest/multi_network/linear_index.h>
 
-namespace nest {
+namespace nest_mn {
   
   LinearIndex::iterator::iterator (LinearIndex* li)
     : indices_ (li)

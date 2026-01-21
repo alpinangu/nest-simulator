@@ -32,7 +32,7 @@
 #include <nest/multi_network/event.h>
 #include <nest/multi_network/mpi_utils.h>
 
-namespace nest {
+namespace nest_mn {
 
   Distributor::Interval::Interval (IndexInterval& interval)
   {
@@ -48,11 +48,11 @@ namespace nest {
   }
 
   
-  IntervalTree<int, nest::Interval, int>*
+  IntervalTree<int, nest_mn::Interval, int>*
   Distributor::buildTree ()
   {
-    IntervalTree<int, nest::Interval, int>* tree
-      = new IntervalTree<int, nest::Interval, int> ();
+    IntervalTree<int, nest_mn::Interval, int>* tree
+      = new IntervalTree<int, nest_mn::Interval, int> ();
     
     IndexMap* indices = dataMap->indexMap ();
     for (IndexMap::iterator i = indices->begin ();
@@ -96,7 +96,7 @@ namespace nest {
   void
   Distributor::initialize ()
   {
-    IntervalTree<int, nest::Interval, int>* tree = buildTree ();
+    IntervalTree<int, nest_mn::Interval, int>* tree = buildTree ();
     
     for (BufferMap::iterator b = buffers.begin (); b != buffers.end (); ++b)
       {

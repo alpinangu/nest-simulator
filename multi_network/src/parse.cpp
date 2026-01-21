@@ -22,7 +22,7 @@
 #include <vector>
 #include <cstdio>
 
-namespace nest {
+namespace nest_mn {
   
   Parser::Parser (std::string s)
     : in (new std::istringstream (s))

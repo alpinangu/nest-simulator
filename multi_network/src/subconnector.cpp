@@ -33,7 +33,7 @@
 #include <cstdlib>
 #endif
 
-namespace nest {
+namespace nest_mn {
 
   Subconnector::Subconnector (MPI_Datatype type,
 			      MPI_Comm intercomm_,

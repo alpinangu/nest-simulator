@@ -16,12 +16,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CLOCK_H
-#define CLOCK_H
+#ifndef MN_CLOCK_H
+#define MN_CLOCK_H
 
 //#include "nest/multi_network/config.h"
 
-namespace nest {
+namespace nest_mn {
 
   // ClockState may be negative due to calculations in Synchronizer
   class ClockState {
@@ -80,4 +80,4 @@ namespace nest {
 
 } // namespace
 
-#endif /* CLOCK_H */
+#endif /* MN_CLOCK_H */

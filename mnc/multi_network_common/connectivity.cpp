@@ -28,7 +28,7 @@
 //Includes from multi_network
 #include <multi_network_common/ioutils.h>
 
-namespace nest
+namespace nest_mn
 {
   
 int ConnectorInfo::maxPortCode_;

@@ -16,12 +16,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COMMUNICATION_H
-#define COMMUNICATION_H
+#ifndef MN_COMMUNICATION_H
+#define MN_COMMUNICATION_H
 
 #include <nest/multi_network/data_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   // These are the MPI message tags used by the MUSIC library
   
@@ -38,4 +38,4 @@ namespace nest {
 
 } // namespace
 
-#endif /* COMMUNICATION_H */
+#endif /* MN_COMMUNICATION_H */

@@ -26,7 +26,7 @@
 #include <strings.h>
 #include <fstream>
 
-namespace nest {
+namespace nest_mn {
 
   //a: This is a static bool that is retained between every objects,
   //a: so we can check if it the constructor is called more than once
@@ -337,7 +337,7 @@ namespace nest {
   void
   Setup::errorChecks ()
   {
-    nest::ApplicationMap* apps = applicationMap ();
+    nest_mn::ApplicationMap* apps = applicationMap ();
     int nRequestedProc = apps->nProcesses ();
     int nMPIProc = mpi_get_comm_size (MPI_COMM_WORLD);
     if (nMPIProc != nRequestedProc)
@@ -392,14 +392,14 @@ namespace nest {
   }
 
 
-  nest::ConnectivityInfo*
+  nest_mn::ConnectivityInfo*
   Setup::portConnectivity (const std::string localName)
   {
     return config_->connectivityMap()->info(localName);
   }
 
 
-  nest::ApplicationMap*
+  nest_mn::ApplicationMap*
   Setup::applicationMap ()
   {
     return config_->applications ();
@@ -434,7 +434,7 @@ namespace nest {
   }
 
 
-  nest::ConnectivityInfo::PortDirection
+  nest_mn::ConnectivityInfo::PortDirection
   Setup::portDirection (const std::string localName)
   {
     return config_->connectivityMap()->direction(localName);
@@ -448,7 +448,7 @@ namespace nest {
   }
 
 
-  nest::PortConnectorInfo
+  nest_mn::PortConnectorInfo
   Setup::portConnections (const std::string localName)
   {
     return config_->connectivityMap ()->connections(localName);

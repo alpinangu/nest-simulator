@@ -28,7 +28,7 @@
 #include <nest/multi_network/communication.h>
 #include <nest/multi_network/connector.h> // used only for debugging
 
-namespace nest {
+namespace nest_mn {
 
   NegotiationIterator::BufferTraversal::BufferTraversal
   (std::vector<NegotiationIntervals>& buffers_)

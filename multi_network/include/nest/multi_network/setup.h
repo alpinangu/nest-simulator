@@ -16,8 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SETUP_H
-#define SETUP_H
+#ifndef MN_SETUP_H
+#define MN_SETUP_H
 
 //#include "music/music-config.hh"
 
@@ -40,7 +40,7 @@ using std::string;
 
 #define MUSIC_DEFAULT_TIMEBASE 1e-9
 
-namespace nest {
+namespace nest_mn {
 
   class Runtime;
 
@@ -124,9 +124,9 @@ namespace nest {
 
     void fullInit ();
 
-    nest::ConnectivityInfo* portConnectivity (const std::string localName);
+    nest_mn::ConnectivityInfo* portConnectivity (const std::string localName);
 
-    nest::ApplicationMap* applicationMap ();
+    nest_mn::ApplicationMap* applicationMap ();
 
     int applicationColor();
 
@@ -136,12 +136,12 @@ namespace nest {
 
     int nProcs ();
 
-    nest::ConnectivityInfo::PortDirection
+    nest_mn::ConnectivityInfo::PortDirection
     portDirection (const std::string localName);
 
     int portWidth (const std::string localName);
 
-    nest::PortConnectorInfo portConnections (const std::string localName);
+    nest_mn::PortConnectorInfo portConnections (const std::string localName);
 
     std::vector<Port*>* ports ()
     {

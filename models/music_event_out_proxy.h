@@ -32,7 +32,7 @@
 #include <vector>
 
 // External includes:
-#include <music.hh>
+#include <nest/multi_network.h>
 
 // Includes from nestkernel:
 #include "device_node.h"
@@ -173,9 +173,9 @@ private:
 
   struct Variables_
   {
-    MUSIC::EventOutputPort* MP_; //!< The MUSIC event port for output of spikes
-    std::vector< MUSIC::GlobalIndex > index_map_;
-    MUSIC::PermutationIndex* music_perm_ind_; //!< The permutation index needed
+    nest_mn::EventOutputPort* MP_; //!< The MUSIC event port for output of spikes
+    std::vector< nest_mn::GlobalIndex > index_map_;
+    nest_mn::PermutationIndex* music_perm_ind_; //!< The permutation index needed
                                               //!< to map the ports of MUSIC.
   };
 

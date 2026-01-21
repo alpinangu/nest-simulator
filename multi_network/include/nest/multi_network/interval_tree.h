@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INTERVAL_TREE_H
-#define INTERVAL_TREE_H
+#ifndef MN_INTERVAL_TREE_H
+#define MN_INTERVAL_TREE_H
 
 #include <vector>
 #include <limits>
 #include <algorithm>
 
-namespace nest {
+namespace nest_mn {
 
   template<class PointType, class IntervalType, class DataType>
   class IntervalTree {
@@ -187,4 +187,4 @@ namespace nest {
   }
 } // namespace
 
-#endif /* INTERVAL_TREE_H */
+#endif /* MN_INTERVAL_TREE_H */

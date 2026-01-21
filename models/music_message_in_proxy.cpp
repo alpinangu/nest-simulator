@@ -25,7 +25,7 @@
 #ifdef HAVE_MUSIC
 
 // External includes:
-#include <music.hh>
+#include <nest/multi_network.h>
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -131,7 +131,7 @@ nest::music_message_in_proxy::pre_run_hook()
   // only publish the port once,
   if ( not S_.published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    nest_mn::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
     {
       throw MUSICSimulationHasRun( get_name() );

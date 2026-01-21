@@ -22,7 +22,7 @@
 #include <nest/multi_network/event_router.h>
 #include <nest/multi_network/event_routing_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   void
   OutputRoutingMap::insertRoutingInterval (EventRouter *router, IndexInterval i, FIBO *b)

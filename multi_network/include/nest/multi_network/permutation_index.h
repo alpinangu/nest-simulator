@@ -16,13 +16,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PERMUTATION_INDEX_H
-#define PERMUTATION_INDEX_H
+#ifndef MN_PERMUTATION_INDEX_H
+#define MN_PERMUTATION_INDEX_H
 
 #include <vector>
 #include <nest/multi_network/index_map.h>
 
-namespace nest {
+namespace nest_mn {
 
   /*
    * This index map is part of the MUSIC API and documented

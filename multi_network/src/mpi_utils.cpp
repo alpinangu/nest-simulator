@@ -21,7 +21,7 @@
  */
 #include <nest/multi_network/mpi_utils.h>
 
-namespace nest {
+namespace nest_mn {
 
   // These are all wrappers to existing functions
   

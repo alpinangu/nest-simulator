@@ -36,7 +36,7 @@
 #include <vector>
 
 // External includes:
-#include <music.hh>
+#include <nest/multi_network.h>
 
 // Includes from nestkernel:
 #include "device_node.h"

@@ -29,7 +29,7 @@ extern "C" {
 #include <iostream>
 #include <fstream>
 
-namespace nest 
+namespace nest_mn 
 {
 
   //a: This is the static constant string from Configuration class

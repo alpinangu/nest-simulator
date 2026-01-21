@@ -22,12 +22,12 @@
 
 
 
-#ifndef INTERVAL_H
-#define INTERVAL_H
+#ifndef MN_INTERVAL_H
+#define MN_INTERVAL_H
 
 #include <ostream>
 
-namespace nest {
+namespace nest_mn {
 
   class Interval {
     int begin_;
@@ -57,4 +57,4 @@ namespace nest {
 
 } // namespace
 
-#endif /* INTERVAL.H */
+#endif /* MN_INTERVAL.H */

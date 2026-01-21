@@ -31,7 +31,7 @@
 #include <multi_network_common/ioutils.h>
 //#include "nest/multi_network/mpi_utils.h"
 
-namespace nest
+namespace nest_mn
 {
 
 void

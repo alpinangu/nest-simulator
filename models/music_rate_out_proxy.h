@@ -32,7 +32,7 @@
 #include <vector>
 
 // External includes:
-#include <music.hh>
+#include <nest/multi_network.h>
 
 // Includes from nestkernel:
 #include "device_node.h"
@@ -172,8 +172,8 @@ private:
 
   struct Variables_
   {
-    MUSIC::ContOutputPort* MP_; //!< The MUSIC rate port for output of spikes
-    std::vector< MUSIC::GlobalIndex > index_map_;
+    nest_mn::ContOutputPort* MP_; //!< The MUSIC rate port for output of spikes
+    std::vector< nest_mn::GlobalIndex > index_map_;
   };
 
   struct Buffers_

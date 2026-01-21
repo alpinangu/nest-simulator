@@ -31,7 +31,7 @@
 //#include <variant>
 //#include <optional>
 
-namespace nest
+namespace nest_mn
 {
 
   //a: like a container (or even like a struct) that holds related data about the running application

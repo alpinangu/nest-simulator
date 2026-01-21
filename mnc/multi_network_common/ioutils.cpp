@@ -2,7 +2,7 @@
 
 #include <multi_network_common/ioutils.h>
 
-namespace nest 
+namespace nest_mn 
 {
 
 namespace IOUtils 
