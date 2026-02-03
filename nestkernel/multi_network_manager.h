@@ -59,7 +59,7 @@ public:
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
   
-  void launch(const std::string exe, const long n);
+  void launch();
   void set_application_map(const DictionaryDatum& dict);
   void set_connectivity_map(const DictionaryDatum& dict);
 

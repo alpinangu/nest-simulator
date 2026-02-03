@@ -373,8 +373,6 @@ namespace nest_mn {
     argv_ = parseArgs(binary, args, &argc_);
     // a:but we need a shared clock for communication
     temporalNegotiator_ = new TemporalNegotiator (this);
-
-    std::cout << "FULL INIT HAS BEEN FINISHED" << std::endl;
   }
   
 

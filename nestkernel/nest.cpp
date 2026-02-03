@@ -39,9 +39,9 @@ namespace nest
 {
 
 void
-launch(const std::string exe, const long n)
+launch()
 {
-  kernel().multi_network_manager.launch( exe, n );
+  kernel().multi_network_manager.launch();
 }
 
 void 

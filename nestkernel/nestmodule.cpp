@@ -310,15 +310,13 @@ void
 NestModule::Launch_l_ifunction::execute( SLIInterpreter* i ) const
 {
   // check for stack load
-  i->assert_stack_load( 2 );
+  //i->assert_stack_load( 2 );
 
   // extract arguments
-  const long n = getValue<long>( i->OStack.pick( 0 ) );
-  const std::string exe = getValue< std::string >( i->OStack.pick( 1 ) );
 
-  launch( exe, n );
+  launch();
 
-  i->OStack.pop( 2 );
+  i->OStack.pop( );
   i->EStack.pop();
 }
 

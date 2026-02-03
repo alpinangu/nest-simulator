@@ -36,8 +36,8 @@ __all__ = [
 ]
 
 @check_stack
-def Launch(exe, n):
-    return sli_func("Launch_l_i", exe, n)
+def Launch():
+    return sli_func("Launch_l_i")
 
 @check_stack
 def SetApplicationMap(dict):

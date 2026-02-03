@@ -240,6 +240,7 @@ void
 			commType,
 			procMethod
 			);
+      /*
             std::cerr << "add (portName = " << portName
                     << ", pdir = " << pdir
                     << ", width = " << width
@@ -250,7 +251,7 @@ void
                     << ", commType = " << commType
                     << ", procMethod = " << procMethod
                     << ")"
-                    << std::endl << std::flush;
+                    << std::endl << std::flush;*/
 
 		}
     }

@@ -101,7 +101,7 @@ MultiNetworkManager::get_status( DictionaryDatum& )
 }
 
 void
-MultiNetworkManager::launch(const std::string exe, const long n)
+MultiNetworkManager::launch()
 {
     std::string binary;
     application_map_.get_variable(app_color_, "binary", &binary);
@@ -410,7 +410,6 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
                 else
                     iProcMethod = nest_mn::ConnectorInfo::TABLE;
 
-                //leader is always 0
                 app->second.add (
                 dir == nest_mn::ConnectivityInfo::OUTPUT ? senderPortName : receiverPortName,
                 dir, width, receiverAppName, receiverPortName, portCode, remoteInfo->leader(),
@@ -440,14 +439,14 @@ MultiNetworkManager::writeEnv()
     setenv (configEnvVarName, env.str().c_str(), 1);
 
     //just for debugging:
-    //if(get_rank() == app.leader())
-    //{
+    if(get_rank() == app.leader())
+    {
         std::cout << "Rank: " << get_rank() << std::endl;
         std::cout << "From the applicaton with color " << app_color_ << "/" << app.color() << "with rank(leader) " << app.leader() << std::endl;
         std::cout << env.str() << std::endl;
         std::cout << " " << std::endl;
 
-    //}
+    }
 } 
 /*
 
