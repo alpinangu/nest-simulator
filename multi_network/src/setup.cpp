@@ -66,7 +66,7 @@ namespace nest_mn {
     if (mpi_is_initialized ())
       errorRank (err_MPI_Init);
     //a: NEST does not use this. you can set an env variable and use it as argv argc
-    maybeProcessMusicArgv (argc, argv);
+    //maybeProcessMusicArgv (argc, argv);
     //a: NEST uses MPI_THREAD_FUNNELED as required
     //a: we pass the argc and argv (which is the original ones we gave to music) 
     //a:so that MPI get neccesery information mpirun -n and stuff
@@ -182,8 +182,8 @@ namespace nest_mn {
       if (!postponeSetup_)
       {
         fullInit ();
-        argc = argc_;
-        argv = argv_;
+        //argc = argc_;
+        //argv = argv_;
       }
       MPI_Comm_split(MPI_COMM_WORLD, postponeSetup_ ? color_ : config_->Color (), myRank, &comm);
       }
@@ -370,7 +370,7 @@ namespace nest_mn {
           args= --option -o somefile
     */
 
-    argv_ = parseArgs(binary, args, &argc_);
+    //argv_ = parseArgs(binary, args, &argc_);
     // a:but we need a shared clock for communication
     temporalNegotiator_ = new TemporalNegotiator (this);
   }

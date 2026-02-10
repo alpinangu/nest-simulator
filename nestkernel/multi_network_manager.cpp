@@ -28,9 +28,11 @@
 #include <mpi.h>
 #include <unistd.h>
 #include <variant>
+#include <filesystem>
 
 // Includes from nestkernel:
 #include "token.h" 
+#include "arraydatum.h" 
 
 //Includes from multi_network_commong
 #include <multi_network_common/ioutils.h>
@@ -132,7 +134,19 @@ MultiNetworkManager::launch()
     }
     else
     {
-        Argv a(argv);
+        std::string argv_str = argv;
+        std::string prog = std::filesystem::path(binary).filename().string(); 
+        std::string cmdline = prog;
+
+        if (!argv_str.empty()) 
+        {
+            cmdline += " ";
+            cmdline += argv_str;
+        }
+
+        
+        Argv a(cmdline);
+        
         execvp(binary.c_str(), a.argv());
     }
 
@@ -286,6 +300,7 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
 
     for (std::vector<nest_mn::ApplicationInfo>::iterator app = application_map_.begin(); app != application_map_.end(); ++app)
     {
+        //std::cout << "added: " << app->name() << std::endl;
         connectivityMap_[app->name()];
     }
 
@@ -297,37 +312,52 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
     for(std::map<std::string, nest_mn::Connectivity>::iterator app = connectivityMap_.begin(); app != connectivityMap_.end(); ++app)
     {
 
+        //std::cout << "Itterating for: " << app->first << std::endl;
         //Itterates the connections
-        for (auto it_out = dict->begin(); it_out != dict->end(); ++it_out)
+        for (auto it_top_dict = dict->begin(); it_top_dict != dict->end(); ++it_top_dict)
         {
-            std::string senderFullName  = it_out->first.toString();
+            std::string senderFullName  = it_top_dict->first.toString();
             std::istringstream stream(senderFullName);
             std::string senderAppName;
             std::getline(stream,senderAppName, '.');
             std::string senderPortName;
             std::getline(stream, senderPortName);
+            
+            Token& subtoken = it_top_dict->second;
 
-            std::string receiverFullName;
-            std::string receiverAppName;
-            std::string receiverPortName;
-            std::string commType;
-            std::string procMethod;
-            int width = -1;
-
-            //we will cast it to a dict datum to itterate over it
-            Token& subtoken = it_out->second;
-
-            if (subtoken.is_a<DictionaryDatum>())
+            if(!subtoken.is_a<ArrayDatum>())
             {
-                DictionaryDatum subdict = getValue<DictionaryDatum>(subtoken);
+                std::cout << "Keys must be a list" << std::endl;
+                return;
+            }
+            
+            ArrayDatum subarray = getValue<ArrayDatum>(subtoken);
 
-                //Ittarates the information of each connection
-                for (auto  it_in = subdict->begin(); it_in != subdict->end(); ++it_in)
+            //Ittarates the information of each connection
+            for (auto  it_array = subarray.begin(); it_array != subarray.end(); ++it_array)
+            {
+                Token& elem = *it_array;
+
+                if (!elem.is_a<DictionaryDatum>())
                 {
-                    std::string key  = it_in->first.toString();
-                    Token& value = it_in->second;
+                    std::cout << "Each list element must be a dictionary\n";
+                    return;
+                }
 
-                    // here I might use #include "name.h", it says it is faster?
+                DictionaryDatum subdict = getValue<DictionaryDatum>(elem);
+
+                std::string receiverFullName;
+                std::string receiverAppName;
+                std::string receiverPortName;
+                std::string commType;
+                std::string procMethod;
+                int width = -1;
+
+                for (auto it_kv = subdict->begin(); it_kv != subdict->end(); ++it_kv)
+                {
+                    std::string key = it_kv->first.toString();
+                    Token& value = it_kv->second;
+
                     if(key == "receiver")
                     {
                         receiverFullName = getValue<std::string>(value);
@@ -396,7 +426,10 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
                     remoteInfo = application_map_.lookup(senderAppName);
                 }
                 else
+                {
+                    //std::cout << "Current itteration is for " << app->first << " but dict entry is for " << senderAppName << " or " << receiverAppName << std::endl;
                     continue;; //We look at other connections to see if they are using the current app
+                }
                 
                 int iCommType;
                 if (commType.length () == 0 || commType == "point-to-point")
@@ -415,10 +448,8 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
                 dir, width, receiverAppName, receiverPortName, portCode, remoteInfo->leader(),
                 remoteInfo->nProc (), iCommType, iProcMethod);
 
+                //std::cout << "receiver port: " << receiverPortName << " receiver app: " <<  receiverAppName << std::endl;
             }
-            else
-                std::cout << "Keys must be a dictionary" << std::endl;
-
         }
     }
 }
@@ -438,6 +469,7 @@ MultiNetworkManager::writeEnv()
 
     setenv (configEnvVarName, env.str().c_str(), 1);
 
+    /*
     //just for debugging:
     if(get_rank() == app.leader())
     {
@@ -447,6 +479,7 @@ MultiNetworkManager::writeEnv()
         std::cout << " " << std::endl;
 
     }
+    */
 } 
 /*
 
