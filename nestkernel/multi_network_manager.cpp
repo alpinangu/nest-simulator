@@ -170,8 +170,8 @@ dict = {
     "app1_name": {
         "binary": "./app",
         "np": 1,
-        "argv": "arg1 arg1" SHOULD THERE BE A DELIMETER??
-        "wd": "working directory" (apps do not have to be in the same directory)
+        "argv": "arg1 arg1"
+        "wd": "working directory"
         "local_var": "value"
     },
     .
@@ -216,8 +216,7 @@ MultiNetworkManager::set_application_map(const DictionaryDatum& dict)
                         app_dict[key] = getValue<std::string>(value);
                     }
                     else
-                        //TODO: handle case
-                        std::cout << "Give the variables as a string" << std::endl;
+                        std::cerr << "Give the variables as a string" << std::endl;
                 }
                     
 
@@ -225,7 +224,6 @@ MultiNetworkManager::set_application_map(const DictionaryDatum& dict)
 
             if(np == -1)
             {   
-                //TODO: HANDLE THIS WITH A LOG
                 exit(111);
             }
             application_map_.add(app_name, np, appcounter, app_dict);
@@ -272,6 +270,10 @@ MultiNetworkManager::set_application_map(const DictionaryDatum& dict)
     */
 
 }
+
+
+
+
 
 /*dict must be of this form
 dict = {
@@ -340,7 +342,7 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
 
                 if (!elem.is_a<DictionaryDatum>())
                 {
-                    std::cout << "Each list element must be a dictionary\n";
+                    std::cerr << "Each list element must be a dictionary\n";
                     return;
                 }
 
@@ -372,12 +374,12 @@ MultiNetworkManager::set_connectivity_map(const DictionaryDatum& dict)
                     else if (key == "width")
                         width = getValue<long>(value);
                     else
-                        std::cout << "not a valid config argument" << std::endl;
+                        std::cerr << "not a valid config argument" << std::endl;
                 }
 
                 if(senderAppName == receiverAppName)
                 {
-                    std::cout << "An application can not connect to itself";
+                    std::cerr << "An application can not connect to itself";
                     return; // ERROR HANDLER HERE
                 }
 

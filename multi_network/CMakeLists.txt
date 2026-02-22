@@ -46,6 +46,8 @@ set(multi_network_sources
   src/spatial.cpp
   src/runtime.cpp
   src/permutation_index.cpp
+  src/predict_rank.cpp
+  src/mpidep.cpp
   )
 
 add_library(multi_network SHARED ${multi_network_sources})

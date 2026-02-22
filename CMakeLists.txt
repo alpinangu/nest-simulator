@@ -232,6 +232,7 @@ add_subdirectory( thirdparty )
 add_subdirectory( testsuite )
 if ( HAVE_PYTHON )
   add_subdirectory( pynest )
+  add_subdirectory( pymulti_network )
 endif ()
 
 ################################################################################
