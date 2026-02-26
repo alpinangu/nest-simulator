@@ -816,6 +816,12 @@ error( "LOCAL Indices are not supported with MUSIC_ANYSOURCE");
   }
   
   
+  void 
+  MessageOutputConnector::tick()
+  {
+    Connector::tick();
+    buffer.clear();
+  }
 
 
   

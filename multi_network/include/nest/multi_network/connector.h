@@ -405,6 +405,7 @@ namespace nest_mn {
 			    MPI_Comm comm,
 			    std::vector<FIBO*>& buffers);
 
+    void tick() override;
     void postCommunication ();
     //MUSIC_ISENDWAITALL is not supported temporarily for message ports
 #if MUSIC_ISENDWAITALL

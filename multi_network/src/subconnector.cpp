@@ -608,7 +608,7 @@ namespace nest_mn {
   {
     void* data;
     int size;
-    buffer_->nextBlock (data, size);
+    buffer_->nextBlockNoClear (data, size);
     // NOTE: marshalling
     char* buffer = static_cast <char*> (data);
     while (size >= MESSAGE_BUFFER_MAX)
