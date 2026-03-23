@@ -29,8 +29,8 @@
 # As a hint allows MUSIC_ROOT_DIR.
 
 find_path( MUSIC_INCLUDE_DIR
-    NAMES multi_network.h
-    HINTS ${Music_ROOT}/include/multi_network/nest
+    NAMES nest/multi_network.h
+    HINTS ${Music_ROOT}/include/multi_network
     )
 find_library( MUSIC_LIBRARY
     NAMES multi_network
