@@ -34,7 +34,7 @@ find_path( MUSIC_INCLUDE_DIR
     )
 find_library( MUSIC_LIBRARY
     NAMES multi_network
-    HINTS ${Music_ROOT}/lib
+    HINTS ${Music_ROOT}/lib/nest
     )
 
 include( FindPackageHandleStandardArgs )
