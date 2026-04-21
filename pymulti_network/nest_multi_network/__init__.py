@@ -1,21 +1,24 @@
-############ 
-#https://svn.boost.org/trac/boost/ticket/6580
-#https://github.com/salilab/imp/issues/732
+############
+# https://svn.boost.org/trac/boost/ticket/6580
+# https://github.com/salilab/imp/issues/732
 # this should be in the __init__.py
 #
 # How to check for openmpi?
 #
+import os
 import sys
+
+
 def setrc():
     import mpi4py.rc
+
     mpi4py.rc.initialize = False
     mpi4py.rc.finalize = False
 
-if sys.platform == 'linux':
-    import DLFCN as dl
-    flags = sys.getdlopenflags()
-    sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)
 
+if sys.platform == "linux":
+    flags = sys.getdlopenflags()
+    sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
     setrc()
     from .pymulti_network import *
 
@@ -24,6 +27,6 @@ else:
     setrc()
     from .pymulti_network import *
 
-#import DLFCN as dl
-#import sys
-#sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)
+# import DLFCN as dl
+# import sys
+# sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)
