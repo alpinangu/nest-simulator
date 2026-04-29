@@ -48,6 +48,9 @@ set(multi_network_sources
   src/permutation_index.cpp
   src/predict_rank.cpp
   src/mpidep.cpp
+  src/ContInPort.cpp
+  src/EventOutPort.cpp
+  src/encoder_runner.cpp
   )
 
 add_library(multi_network SHARED ${multi_network_sources})

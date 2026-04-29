@@ -2,7 +2,7 @@
 # distutils: language = c++
 # cython: c_string_encoding = default
 
-from libc.stdlib cimport malloc, free
+from libc.stdlib cimport free, malloc
 
 import mpi4py.MPI as MPI
 from six.moves import cPickle as pickle
@@ -347,6 +347,8 @@ cdef class MessageOutputPort(Port):
 ###########################################################
 
 import sys
+
+
 cdef class Setup(object):
     """
     API to setup the music interface.
@@ -537,7 +539,7 @@ cdef class Runtime(object):
         del self.ptr
 
     def time(self): return self.ptr.time()
-    
+
     def tick(self): tick(self.ptr)
 
     def finalize(self):
@@ -555,7 +557,9 @@ cdef class Runtime(object):
 from nest_multi_network.pybuffer import Buffer
 
 from cpython cimport array
+
 from array import array
+
 
 cdef class IndexMap:
     """
@@ -625,7 +629,7 @@ cdef class EventHandler:
     def __cinit__(self, object func, IndexType t):
         """
         func: a callable of the form
-          func(double d, IndexType t, int i) where 
+          func(double d, IndexType t, int i) where
              double d: the event time
              IndexType t: local or global index enum
              int i: the index value
@@ -723,13 +727,85 @@ cdef cbool MessageCallback(PyObject* func,
     cdef object obj = pickle.loads(pobj) if pickled else pobj
     (<object>func)(t, obj)
     return True
+#############################################################################
+cdef class EncoderHandler:
+    def __cinit__(self, func):
+        self.ptr = new CEHandler(<PyObject*> func)
+        self.func = func
 
+    def __dealloc__(self):
+        if self.ptr != NULL:
+            del self.ptr
+            self.ptr = NULL
+
+    def echo(self, object observation):
+        cdef vector[double] obs
+        cdef EncodedSpikeTrains result
+        cdef size_t i
+        cdef size_t j
+        cdef list py_result = []
+        cdef list py_train
+
+        for value in observation:
+            obs.push_back(<double> value)
+
+        result = callEncoderHandler(self.ptr, obs.data(), obs.size())
+
+        for i in range(result.size()):
+            py_train = []
+            for j in range(result[i].size()):
+                py_train.append(result[i][j])
+            py_result.append(py_train)
+
+        return py_result
+
+cdef cbool EncoderCallback(
+    PyObject* func,
+    const double* observation,
+    size_t observation_size,
+    EncodedSpikeTrains* result
+) except False:
+    cdef list obs = []
+    cdef object py_result
+    cdef object py_train
+    cdef object value
+    cdef size_t i
+    cdef vector[double] cpp_train
+
+    for i in range(observation_size):
+        obs.append(observation[i])
+
+    py_result = (<object> func)(obs)
+
+    result[0].clear()
+
+    for py_train in py_result:
+        cpp_train.clear()
+
+        for value in py_train:
+            cpp_train.push_back(<double> value)
+
+        result[0].push_back(cpp_train)
+
+    return True
+
+def encode(EncoderHandler handler, list argv=None):
+    cdef Args r = argv_toc(argv if argv is not None else sys.argv)
+    cdef CEncoderRunner* runner = NULL
+
+    try:
+        runner = new CEncoderRunner(handler.ptr)
+        runner.run(r.argc, r.argv)
+    finally:
+        if runner != NULL:
+            del runner
+        free(r.argv)
 #############################################################################
 #
 # And for handling errors at the C/Python interface
 #
 # pythonError: true if a python error is being stored until we get out of C
-# etype, evalue, etraceback: three bits of data to recreate the exception 
+# etype, evalue, etraceback: three bits of data to recreate the exception
 #    so that it can be thrown
 #
 pythonError = False

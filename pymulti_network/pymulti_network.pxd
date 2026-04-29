@@ -3,17 +3,19 @@
 cdef extern from "nest_multi_network/multi_network_c.h":
     pass
 
-include "pyconfig.pxi" 
+include "pyconfig.pxi"
 cimport mpi4py.MPI as MPI
+
 IF MPI4V2:
     from mpi4py.libmpi cimport *
 ELSE:
     from mpi4py.mpi_c cimport *
 
-from libcpp cimport bool as cbool
-from libcpp.string cimport string
 from cpython.ref cimport PyObject
 from libc.stddef cimport size_t
+from libcpp cimport bool as cbool
+from libcpp.string cimport string
+from libcpp.vector cimport vector
 
 ###########################################################
 
@@ -50,7 +52,7 @@ cdef extern from "nest/multi_network/index_map.h" namespace "nest_mn":
     cdef cppclass CIndex "nest_mn::Index":
         int WILDCARD_MAX
     ctypedef enum IndexType "nest_mn::Index::Type":
-            IndexGLOBAL "nest_mn::Index::GLOBAL", 
+            IndexGLOBAL "nest_mn::Index::GLOBAL",
             IndexLOCAL "nest_mn::Index::LOCAL"
 
     cdef cppclass GlobalIndex(CIndex):
@@ -150,7 +152,7 @@ cdef extern from "nest_multi_network/multi_network_c.h" namespace "nest_mn":
     cdef inline void mapImpl "nest_mn::Implementer::mapImpl" (
         CContOutputPort*, CDataMap*, int)
     cdef inline void mapImpl "nest_mn::Implementer::mapImpl" (
-        CEventInputPort*, CIndexMap*, IndexType, 
+        CEventInputPort*, CIndexMap*, IndexType,
         CEventHandlerPtr, double, int)
     cdef inline void mapImpl "nest_mn::Implementer::mapImpl" (
         CEventOutputPort*, CIndexMap*, IndexType, int)
@@ -167,7 +169,7 @@ cdef extern from "nest_multi_network/multi_network_c.h" namespace "nest_mn":
     cdef PyObject* etype
     cdef PyObject* evalue
     cdef PyObject* etraceback
-    
+
 
 ###########################################################
 
@@ -222,6 +224,7 @@ cdef class MessageOutputPort(Port):
 
 from nest_multi_network.pybuffer cimport Buffer
 
+
 cdef class DataMap(object):
     cdef CDataMap* ptr
     cdef Buffer buf
@@ -243,3 +246,36 @@ cdef cbool EventCallback "nest_mn::EventCallback" ( \
 
 cdef cbool MessageCallback "nest_mn::MessageCallback" ( \
   PyObject*, double, void*, size_t, cbool) except False
+
+###########################################################
+
+cdef extern from "nest/multi_network/encoder.h" namespace "nest_mn":
+    ctypedef vector[vector[double]] EncodedSpikeTrains
+
+    cdef cppclass CEncoderHandler "nest_mn::EncoderHandler":
+        EncodedSpikeTrains operator()(const double*, size_t)
+
+cdef extern from "nest/multi_network/encoder_runner.h" namespace "nest_mn":
+    cdef cppclass CEncoderRunner "nest_mn::EncoderRunner":
+        CEncoderRunner(CEncoderHandler*)
+        void run(int, char**)
+
+cdef extern from "nest_multi_network/multi_network_c.h" namespace "nest_mn":
+    cdef cppclass CEHandler "nest_mn::EHandler"(CEncoderHandler):
+        CEHandler(PyObject*)
+
+    cdef inline EncodedSpikeTrains callEncoderHandler(
+        CEncoderHandler*,
+        const double*,
+        size_t)
+
+cdef class EncoderHandler:
+    cdef CEncoderHandler* ptr
+    cdef object func
+
+cdef cbool EncoderCallback "nest_mn::EncoderCallback" (
+    PyObject*,
+    const double*,
+    size_t,
+    EncodedSpikeTrains*
+) except False
