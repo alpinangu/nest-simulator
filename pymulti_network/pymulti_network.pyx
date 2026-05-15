@@ -801,6 +801,28 @@ def encode(EncoderHandler handler, list argv=None):
             del runner
         free(r.argv)
 #############################################################################
+class Environment:
+    def __init__(self, out, readout, out_port_name="out", in_port_name="in", argv=None):
+        self.out = out
+        self.readout = readout
+
+        self.setup = Setup(argv)
+        self.timestep = float(self.setup.config("timestep"))
+
+        self.out_port = self.setup.publishContOutput(out_port_name)
+        self.out_port.map(self.out)
+
+        self.in_port = self.setup.publishContInput(in_port_name)
+        self.in_port.map(self.readout)
+
+        self.runtime = self.setup.runtime(self.timestep)
+
+    def __iter__(self):
+        return iter(self.runtime)
+
+    def __getattr__(self, name):
+        return getattr(self.runtime, name)
+#############################################################################
 #
 # And for handling errors at the C/Python interface
 #
