@@ -279,3 +279,41 @@ cdef cbool EncoderCallback "nest_mn::EncoderCallback" (
     size_t,
     EncodedSpikeTrains*
 ) except False
+
+###########################################################
+
+cdef extern from "nest/multi_network/decoder.h" namespace "nest_mn":
+    cdef cppclass CDecodedSpike "nest_mn::DecodedSpike":
+        int id
+        double t
+        CDecodedSpike(int, double)
+
+    ctypedef vector[CDecodedSpike] DecodedSpikes
+    ctypedef double DecodedAction
+
+    cdef cppclass CDecoderHandler "nest_mn::DecoderHandler":
+        DecodedAction operator()(const DecodedSpikes&)
+
+cdef extern from "nest_multi_network/multi_network_c.h" namespace "nest_mn":
+    cdef cppclass CDHandler "nest_mn::DHandler"(CDecoderHandler):
+        CDHandler(PyObject*)
+
+    cdef inline DecodedAction callDecoderHandler(
+        CDecoderHandler*,
+        const DecodedSpikes*
+    )
+
+cdef extern from "nest/multi_network/decoder_runner.h" namespace "nest_mn":
+    cdef cppclass CDecoderRunner "nest_mn::DecoderRunner":
+        CDecoderRunner(CDecoderHandler*)
+        void run(int, char**) except +
+
+cdef class DecoderHandler:
+    cdef CDecoderHandler* ptr
+    cdef object func
+
+cdef cbool DecoderCallback "nest_mn::DecoderCallback" (
+    PyObject*,
+    const DecodedSpikes&,
+    DecodedAction*
+) except False

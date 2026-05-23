@@ -801,6 +801,56 @@ def encode(EncoderHandler handler, list argv=None):
             del runner
         free(r.argv)
 #############################################################################
+cdef class DecoderHandler:
+    def __cinit__(self, func):
+        self.ptr = new CDHandler(<PyObject*> func)
+        self.func = func
+
+    def __dealloc__(self):
+        if self.ptr != NULL:
+            del self.ptr
+            self.ptr = NULL
+
+    def echo(self, object spikes):
+        cdef DecodedSpikes cpp_spikes
+        cdef object py_spike
+        cdef int spike_id
+        cdef double spike_t
+
+        for py_spike in spikes:
+            spike_id = <int> py_spike[0]
+            spike_t = <double> py_spike[1]
+            cpp_spikes.push_back(CDecodedSpike(spike_id, spike_t))
+
+        return callDecoderHandler(self.ptr, &cpp_spikes)
+
+cdef cbool DecoderCallback(
+    PyObject* func,
+    const DecodedSpikes& spikes,
+    DecodedAction* result
+) except False:
+    cdef list py_spikes = []
+    cdef size_t i
+
+    for i in range(spikes.size()):
+        py_spikes.append((spikes[i].id, spikes[i].t))
+
+    result[0] = <DecodedAction> (<object> func)(py_spikes)
+
+    return True
+
+def decode(DecoderHandler handler, list argv=None):
+    cdef Args r = argv_toc(argv if argv is not None else sys.argv)
+    cdef CDecoderRunner* runner = NULL
+
+    try:
+        runner = new CDecoderRunner(handler.ptr)
+        runner.run(r.argc, r.argv)
+    finally:
+        if runner != NULL:
+            del runner
+        free(r.argv)
+#############################################################################
 class Environment:
     def __init__(self, out, readout, out_port_name="out", in_port_name="in", argv=None):
         self.out = out

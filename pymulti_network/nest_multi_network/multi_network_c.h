@@ -10,9 +10,11 @@
 #include "nest/multi_network/message.h"
 #include "nest/multi_network/runtime.h"
 #include "nest/multi_network/setup.h"
-#include <mpi.h>
+#include <nest/multi_network/decoder.h>
 
 #include <iostream>
+#include <mpi.h>
+#include <stdexcept>
 #include <string>
 
 namespace nest_mn
@@ -192,6 +194,46 @@ inline EncodedSpikeTrains
 callEncoderHandler( EncoderHandler* handler, const double* observation, size_t observation_size )
 {
   return ( *handler )( observation, observation_size );
+}
+
+bool DecoderCallback( PyObject* func, const DecodedSpikes& spikes, DecodedAction* result );
+
+class DHandler : public DecoderHandler
+{
+public:
+  PyObject* const func;
+
+  DHandler( PyObject* func )
+    : func( func )
+  {
+  }
+
+  DecodedAction
+  operator()( const DecodedSpikes& spikes ) override
+  {
+    DecodedAction result;
+
+    if ( pythonError )
+    {
+      throw std::runtime_error( "Python decoder callback failed" );
+    }
+
+    if ( DecoderCallback( func, spikes, &result ) )
+    {
+      return result;
+    }
+
+    pythonError = true;
+    PyErr_Fetch( &etype, &evalue, &etraceback );
+
+    throw std::runtime_error( "Python decoder callback failed" );
+  }
+};
+
+inline DecodedAction
+callDecoderHandler( DecoderHandler* handler, const DecodedSpikes* spikes )
+{
+  return ( *handler )( *spikes );
 }
 
 class Implementer

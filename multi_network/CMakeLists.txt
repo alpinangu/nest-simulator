@@ -51,6 +51,9 @@ set(multi_network_sources
   src/ContInPort.cpp
   src/EventOutPort.cpp
   src/encoder_runner.cpp
+  src/ContOutPort.cpp
+  src/EventInPort.cpp
+  src/decoder_runner.cpp
   )
 
 add_library(multi_network SHARED ${multi_network_sources})
