@@ -544,6 +544,8 @@ EventDeliveryManager::collocate_spike_data_buffers_( SendBufferPosition& send_bu
     local_offsets[ rank ] = pos;
   }
 
+#pragma omp barrier
+
   // --------------------------------------------------
   // 3. Sequential Master Consolidation (Microsecond Cost)
   // --------------------------------------------------
