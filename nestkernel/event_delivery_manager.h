@@ -26,6 +26,7 @@
 // C++ includes:
 #include <cassert>
 #include <limits>
+#include <memory>
 #include <vector>
 
 // Includes from libnestutil:
@@ -483,6 +484,9 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_collocate_spike_data_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_spike_data_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_target_data_;
+
+  std::unique_ptr< SendBufferPosition > spike_send_buffer_position_;
+  std::vector< size_t > num_spikes_per_rank_;
 };
 
 inline void

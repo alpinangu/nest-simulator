@@ -1082,14 +1082,29 @@ nest::SimulationManager::update_()
 #pragma omp master
         {
           // gather and deliver only at end of slice, i.e., end of min_delay step
-          if ( to_step_ == kernel().connection_manager.get_min_delay() )
+        }
+
+        if ( to_step_ == kernel().connection_manager.get_min_delay() )
+        {
+          if ( kernel().connection_manager.has_primary_connections() )
           {
-            if ( kernel().connection_manager.has_primary_connections() )
+#pragma omp master
             {
               sw_gather_spike_data_.start();
-              kernel().event_delivery_manager.gather_spike_data();
+            }
+
+#pragma omp barrier
+            kernel().event_delivery_manager.gather_spike_data();
+#pragma omp barrier
+
+#pragma omp master
+            {
               sw_gather_spike_data_.stop();
             }
+          }
+
+#pragma omp master
+          {
             if ( kernel().connection_manager.secondary_connections_exist() )
             {
               sw_gather_secondary_data_.start();
@@ -1097,7 +1112,10 @@ nest::SimulationManager::update_()
               sw_gather_secondary_data_.stop();
             }
           }
+        }
 
+#pragma omp master
+        {
           advance_time_();
 
           if ( print_time_ )
@@ -1136,7 +1154,6 @@ nest::SimulationManager::update_()
         }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
-
         if ( update_time_limit_exceeded )
         {
           LOG( VerbosityLevel::ERROR, "SimulationManager::update", "Update time limit exceeded." );

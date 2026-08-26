@@ -71,6 +71,8 @@ public:
   bool is_chunk_filled( const size_t rank ) const;
 
   void increase( const size_t rank );
+
+  void advance( const size_t rank, const size_t n );
 };
 
 inline size_t
@@ -103,6 +105,12 @@ SendBufferPosition::increase( const size_t rank )
   ++idx_[ rank ];
 }
 
+inline void
+SendBufferPosition::advance( const size_t rank, const size_t n )
+{
+  assert( idx_[ rank ] + n <= end_[ rank ] );
+  idx_[ rank ] += n;
+}
 
 /**
  * This class simplifies keeping track of write position in MPI buffer

@@ -373,15 +373,20 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
 
   const size_t old_buff_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
 
-  if ( global_max_spikes_per_rank_ < send_recv_buffer_shrink_limit_ * old_buff_size_per_rank )
+#pragma omp master
   {
-    const size_t new_buff_size_per_rank =
-      std::max( 2UL, static_cast< size_t >( ( 1 + send_recv_buffer_shrink_spare_ ) * global_max_spikes_per_rank_ ) );
-    kernel().mpi_manager.set_buffer_size_spike_data(
-      kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
-    resize_send_recv_buffers_spike_data_();
-    send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank_, new_buff_size_per_rank );
+    if ( global_max_spikes_per_rank_ < send_recv_buffer_shrink_limit_ * old_buff_size_per_rank )
+    {
+      const size_t new_buff_size_per_rank =
+        std::max( 2UL, static_cast< size_t >( ( 1 + send_recv_buffer_shrink_spare_ ) * global_max_spikes_per_rank_ ) );
+      kernel().mpi_manager.set_buffer_size_spike_data(
+        kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
+      resize_send_recv_buffers_spike_data_();
+      send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank_, new_buff_size_per_rank );
+    }
   }
+
+#pragma omp barrier
 
   /* The following do-while loop is executed
    * - once if all spikes fit into current send buffers on all ranks
@@ -390,68 +395,87 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
   bool all_spikes_transmitted = false;
   do
   {
-    // Need to get new positions in case buffer size has changed
-    SendBufferPosition send_buffer_position;
+#pragma omp master
+    {
+      // Need to get new positions in case buffer size has changed
+      spike_send_buffer_position_ = std::make_unique< SendBufferPosition >();
 
-    sw_collocate_spike_data_.start();
+      sw_collocate_spike_data_.start();
 
-    // Set marker at end of each chunk to DEFAULT
-    reset_complete_marker_spike_data_( send_buffer_position, send_buffer );
-    std::vector< size_t > num_spikes_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
+      // Set marker at end of each chunk to DEFAULT
+      reset_complete_marker_spike_data_( *spike_send_buffer_position_, send_buffer );
+
+      num_spikes_per_rank_.assign( kernel().mpi_manager.get_num_processes(), 0 );
+    }
+
+#pragma omp barrier
 
     // Collocate spikes to send buffer
-    collocate_spike_data_buffers_( send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
+    collocate_spike_data_buffers_(
+      *spike_send_buffer_position_, emitted_spikes_register_, send_buffer, num_spikes_per_rank_ );
 
     if ( off_grid_spiking_ )
     {
       collocate_spike_data_buffers_(
-        send_buffer_position, off_grid_emitted_spikes_register_, send_buffer, num_spikes_per_rank );
+        *spike_send_buffer_position_, off_grid_emitted_spikes_register_, send_buffer, num_spikes_per_rank_ );
     }
 
-    // Largest number of spikes sent from this rank to any other rank.
-    const auto local_max_spikes_per_rank = *std::max_element( num_spikes_per_rank.begin(), num_spikes_per_rank.end() );
+#pragma omp master
+    {
+      // Largest number of spikes sent from this rank to any other rank.
+      const auto local_max_spikes_per_rank =
+        *std::max_element( num_spikes_per_rank_.begin(), num_spikes_per_rank_.end() );
 
-    // At this point, all send_buffer entries with spikes to be transmitted, as well
-    // as all chunk-end entries, have marker DEFAULT.
-    set_end_marker_( send_buffer_position, send_buffer, local_max_spikes_per_rank );
+      // At this point, all send_buffer entries with spikes to be transmitted, as well
+      // as all chunk-end entries, have marker DEFAULT.
+      set_end_marker_( *spike_send_buffer_position_, send_buffer, local_max_spikes_per_rank );
 
-    sw_collocate_spike_data_.stop();
-    sw_communicate_spike_data_.start();
+      sw_collocate_spike_data_.stop();
+      sw_communicate_spike_data_.start();
+
 #ifdef MPI_SYNC_TIMER
-    // We introduce an explicit barrier at this point to measure how long each process idles until all other processes
-    // reached this point as well. This barrier is directly followed by another implicit barrier due to global
-    // communication.
-    kernel().get_mpi_synchronization_stopwatch().start();
-    kernel().mpi_manager.synchronize();
-    kernel().get_mpi_synchronization_stopwatch().stop();
+      // We introduce an explicit barrier at this point to measure how long each process idles until all other processes
+      // reached this point as well. This barrier is directly followed by another implicit barrier due to global
+      // communication.
+      kernel().get_mpi_synchronization_stopwatch().start();
+      kernel().mpi_manager.synchronize();
+      kernel().get_mpi_synchronization_stopwatch().stop();
 #endif
 
-    // Given that we templatize by plain vs offgrid, this if should not be necessary, but ...
-    if ( off_grid_spiking_ )
-    {
-      kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer, recv_buffer );
-    }
-    else
-    {
-      kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
+      // Given that we templatize by plain vs offgrid, this if should not be necessary, but ...
+      if ( off_grid_spiking_ )
+      {
+        kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer, recv_buffer );
+      }
+      else
+      {
+        kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
+      }
+
+      sw_communicate_spike_data_.stop();
+
+      global_max_spikes_per_rank_ = get_global_max_spikes_per_rank_( *spike_send_buffer_position_, recv_buffer );
     }
 
-    sw_communicate_spike_data_.stop();
-
-    global_max_spikes_per_rank_ = get_global_max_spikes_per_rank_( send_buffer_position, recv_buffer );
+#pragma omp barrier
 
     all_spikes_transmitted =
       global_max_spikes_per_rank_ <= kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
 
     if ( not all_spikes_transmitted )
     {
-      const size_t new_buff_size_per_rank =
-        static_cast< size_t >( ( 1 + send_recv_buffer_grow_extra_ ) * global_max_spikes_per_rank_ );
+#pragma omp master
+      {
+        const size_t new_buff_size_per_rank =
+          static_cast< size_t >( ( 1 + send_recv_buffer_grow_extra_ ) * global_max_spikes_per_rank_ );
 
-      kernel().mpi_manager.set_buffer_size_spike_data(
-        kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
-      resize_send_recv_buffers_spike_data_();
-      send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank_, new_buff_size_per_rank );
+        kernel().mpi_manager.set_buffer_size_spike_data(
+          kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
+        resize_send_recv_buffers_spike_data_();
+        send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank_, new_buff_size_per_rank );
+      }
+
+#pragma omp barrier
     }
 
   } while ( not all_spikes_transmitted );
@@ -472,28 +496,90 @@ EventDeliveryManager::collocate_spike_data_buffers_( SendBufferPosition& send_bu
   std::vector< SpikeDataT >& send_buffer,
   std::vector< size_t >& num_spikes_per_rank )
 {
-  // First dimension: loop over writing thread
-  for ( auto& emitted_spikes_per_thread : emitted_spikes_register )
+
+  const size_t tid = kernel().vp_manager.get_thread_id();
+  const size_t num_writers = emitted_spikes_register.size();
+  const size_t num_ranks = kernel().mpi_manager.get_num_processes();
+
+  std::vector< size_t > local_counts( num_ranks, 0 );
+  std::vector< size_t > local_offsets( num_ranks, 0 );
+
+  static std::vector< size_t > global_counts;
+#pragma omp master
   {
-    // Second dimension: loop over entries
-    for ( auto& emitted_spike : *emitted_spikes_per_thread )
+    global_counts.assign( num_writers * num_ranks, 0 );
+  }
+#pragma omp barrier
+
+  // --------------------------------------------------
+  // 1. Parallel Count (local memory)
+  // --------------------------------------------------
+  for ( const auto& spike : *emitted_spikes_register[ tid ] )
+  {
+    ++local_counts[ spike.rank ];
+  }
+
+  // Write out to global tracking matrix
+  for ( size_t rank = 0; rank < num_ranks; ++rank )
+  {
+    global_counts[ tid * num_ranks + rank ] = local_counts[ rank ];
+  }
+
+#pragma omp barrier
+
+  // --------------------------------------------------
+  // 2. Thread-Independent Prefix Sum (No OpenMP loops!)
+  // --------------------------------------------------
+  // Instead of work-sharing by rank, every thread calculates its own offset
+  // concurrently by summing the counts of the threads that came before it.
+  for ( size_t rank = 0; rank < num_ranks; ++rank )
+  {
+    size_t pos = send_buffer_position.idx( rank );
+
+    // Sum columns from thread 0 up to 'tid'
+    for ( size_t t = 0; t < tid; ++t )
     {
-      const size_t rank = emitted_spike.rank;
+      pos += global_counts[ t * num_ranks + rank ];
+    }
+    local_offsets[ rank ] = pos;
+  }
 
-      // We need to count here even though send_buffer_position also counts,
-      // but send_buffer_position will only count spikes actually written,
-      // we need all spikes to have information for buffer resizing.
-      ++num_spikes_per_rank[ rank ];
-
-      // We do not break if condition is false, because there may be spikes that
-      // can be sent to other ranks than the one that is full.
-      if ( not send_buffer_position.is_chunk_filled( rank ) )
+  // --------------------------------------------------
+  // 3. Sequential Master Consolidation (Microsecond Cost)
+  // --------------------------------------------------
+  // Since num_ranks is only 4, work-sharing with OpenMP costs more in overhead
+  // than just letting the master thread calculate the final array boundary steps.
+#pragma omp master
+  {
+    for ( size_t rank = 0; rank < num_ranks; ++rank )
+    {
+      size_t total_rank_spikes = 0;
+      for ( size_t t = 0; t < num_writers; ++t )
       {
-        send_buffer[ send_buffer_position.idx( rank ) ] = emitted_spike.spike_data;
-        send_buffer_position.increase( rank );
+        total_rank_spikes += global_counts[ t * num_ranks + rank ];
       }
+      num_spikes_per_rank[ rank ] += total_rank_spikes;
+
+      const size_t available = send_buffer_position.end( rank ) - send_buffer_position.idx( rank );
+      send_buffer_position.advance( rank, std::min( total_rank_spikes, available ) );
     }
   }
+#pragma omp barrier  // Ensure cursor updates are visible to all 128 threads
+
+  // --------------------------------------------------
+  // 4. Parallel Copy (128 threads copying to unique slots)
+  // --------------------------------------------------
+  for ( const auto& spike : *emitted_spikes_register[ tid ] )
+  {
+    const size_t rank = spike.rank;
+    const size_t p = local_offsets[ rank ]++;
+
+    if ( p < send_buffer_position.end( rank ) )
+    {
+      send_buffer[ p ] = spike.spike_data;
+    }
+  }
+#pragma omp barrier
 }
 
 template < typename SpikeDataT >
