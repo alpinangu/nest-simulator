@@ -52,6 +52,7 @@
 #include "nest_names.h"
 #include "nest_types.h"
 #include "node.h"
+#include "numastat.h"
 #include "stopwatch_impl.h"
 #include "target_table_devices_impl.h"
 
@@ -1787,7 +1788,15 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
     kernel().get_omp_synchronization_construction_stopwatch().stop();
 #pragma omp single
     {
+      auto before = read_numastat();
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );
+      auto after = read_numastat();
+
+      std::cout << "\n\nNUMASTAT of fill_compressed_spike_data\n";
+      for ( const auto& [ key, value ] : after )
+      {
+        std::cout << key << ": " << value - before.at( key ) << '\n';
+      }
     }  // of omp single; implicit barrier
   }
 }

@@ -119,6 +119,7 @@ set ( nestkernel_sources
       nest_extension_interface.h
       stopwatch.h stopwatch_impl.h
       cycle_time_log.h cycle_time_log.cpp
+      numastat.h numastat.cpp
       )
 
 if ( HAVE_MUSIC )

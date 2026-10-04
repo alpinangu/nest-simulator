@@ -32,6 +32,7 @@
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
+#include "numastat.h"
 #include "send_buffer_position.h"
 #include "source.h"
 #include "stopwatch_impl.h"
@@ -899,8 +900,16 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 #pragma omp master
     {
       sw_communicate_target_data_.start();
+      auto before = read_numastat();
       kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
+      auto after = read_numastat();
       sw_communicate_target_data_.stop();
+
+      std::cout << "\n\nNUMASTAT of TargetData MPI_Alltoall\n";
+      for ( const auto& [ key, value ] : after )
+      {
+        std::cout << key << ": " << value - before.at( key ) << '\n';
+      }
     }  // of omp master (no barrier)
 #pragma omp barrier
 
