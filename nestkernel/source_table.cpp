@@ -543,25 +543,18 @@ SourceTable::dump_compressible_sources() const
 }
 
 void
-SourceTable::fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
+SourceTable::fill_compressed_spike_data_map()
 {
   const size_t num_synapse_models = kernel().model_manager.get_num_connection_models();
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   assert( compressible_sources_.size() == num_threads );
 
-  compressed_spike_data.clear();
-  compressed_spike_data.resize( num_threads, std::vector< std::vector< SpikeData > >( num_synapse_models ) );
   compressed_spike_data_map_.clear();
   compressed_spike_data_map_.resize( num_synapse_models, std::map< size_t, CSDMapEntry >() );
 
   // For each synapse type, and for each source neuron with at least one local target,
   // store in compressed_spike_data_map_ the index at which data for that source is stored in
-  // compressed_spike_data[tid][syn_id] for all threads tid. Each thread holds an entry for
-  // every source; entries are valid only for threads that own a local target of the source.
-  const SpikeData invalid_entry( invalid_targetindex, invalid_synindex, invalid_lcid, 0 );
-
-  // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
-  //       Maybe one can exploit that to avoid searching with find() below.
+  // compressed_spike_data[tid][syn_id] for all threads tid.
   for ( synindex syn_id = 0; syn_id < num_synapse_models; ++syn_id )
   {
     auto& csd_map = compressed_spike_data_map_[ syn_id ];
@@ -574,35 +567,49 @@ SourceTable::fill_compressed_spike_data( std::vector< std::vector< std::vector< 
         csd_map.try_emplace( connection.first, csd_map.size(), target_thread );
       }
     }
+  }  // for syn_id
+}
 
-    // All threads need an entry for every source, since source indices are shared across threads.
-    for ( size_t tid = 0; tid < num_threads; ++tid )
+void
+SourceTable::fill_compressed_spike_data( const size_t tid,
+  std::vector< std::vector< SpikeData > >& compressed_spike_data )
+{
+  const size_t num_synapse_models = compressed_spike_data_map_.size();
+
+  // Executed by each thread for its own data, so that all memory is allocated by the owning thread.
+  compressed_spike_data.clear();
+  compressed_spike_data.resize( num_synapse_models );
+
+  // Each thread holds an entry for every source, since source indices are shared across threads;
+  // entries are valid only if the thread owns a local target of the source.
+  const SpikeData invalid_entry( invalid_targetindex, invalid_synindex, invalid_lcid, 0 );
+
+  // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
+  //       Maybe one can exploit that to avoid searching with find() below.
+  for ( synindex syn_id = 0; syn_id < num_synapse_models; ++syn_id )
+  {
+    const auto& csd_map = compressed_spike_data_map_[ syn_id ];
+    auto& syn_csd = compressed_spike_data[ syn_id ];
+
+    syn_csd.assign( csd_map.size(), invalid_entry );
+
+    for ( const auto& connection : compressible_sources_[ tid ][ syn_id ] )
     {
-      compressed_spike_data[ tid ][ syn_id ].assign( csd_map.size(), invalid_entry );
-    }
+      const auto source_index = csd_map.find( connection.first )->second.get_source_index();
 
-    for ( size_t target_thread = 0; target_thread < num_threads; ++target_thread )
-    {
-      auto& thread_csd = compressed_spike_data[ target_thread ][ syn_id ];
-      for ( const auto& connection : compressible_sources_[ target_thread ][ syn_id ] )
-      {
-        const auto source_index = csd_map.find( connection.first )->second.get_source_index();
+      assert( syn_csd[ source_index ].get_lcid() == invalid_lcid );
 
-        assert( thread_csd[ source_index ].get_lcid() == invalid_lcid );
+      syn_csd[ source_index ] = connection.second;
+    }  // for connection
 
-        thread_csd[ source_index ] = connection.second;
-      }  // for connection
-
-      compressible_sources_[ target_thread ][ syn_id ].clear();
-
-    }  // for target_thread
+    compressible_sources_[ tid ][ syn_id ].clear();
   }  // for syn_id
 }
 
 // Argument name only needed if full logging is activated. Macro-protect to avoid unused argument warning.
 void
 SourceTable::dump_compressed_spike_data(
-  const std::vector< std::vector< std::vector< SpikeData > > >& FULL_LOGGING_ONLY( compressed_spike_data ) ) const
+  const std::vector< std::vector< std::vector< SpikeData > >* >& FULL_LOGGING_ONLY( compressed_spike_data ) ) const
 {
   FULL_LOGGING_ONLY(
     for ( const auto& tab : compressed_spike_data_map_ ) {
@@ -619,9 +626,9 @@ SourceTable::dump_compressed_spike_data(
 
     // compressed_spike_data is arranged as threads|synapses|sources, dump ordered by synapse, source, thread
     if ( not compressed_spike_data.empty() ) {
-      for ( size_t syn_id = 0; syn_id < compressed_spike_data[ 0 ].size(); ++syn_id )
+      for ( size_t syn_id = 0; syn_id < compressed_spike_data[ 0 ]->size(); ++syn_id )
       {
-        for ( size_t six = 0; six < compressed_spike_data[ 0 ][ syn_id ].size(); ++six )
+        for ( size_t six = 0; six < ( *compressed_spike_data[ 0 ] )[ syn_id ].size(); ++six )
         {
           for ( size_t tx = 0; tx < compressed_spike_data.size(); ++tx )
           {
@@ -630,8 +637,8 @@ SourceTable::dump_compressed_spike_data(
               kernel().vp_manager.get_thread_id(),
               six,
               tx,
-              compressed_spike_data[ tx ][ syn_id ][ six ].get_lcid(),
-              compressed_spike_data[ tx ][ syn_id ][ six ].get_tid() ) );
+              ( *compressed_spike_data[ tx ] )[ syn_id ][ six ].get_lcid(),
+              ( *compressed_spike_data[ tx ] )[ syn_id ][ six ].get_tid() ) );
           }
         }
       }

@@ -526,6 +526,11 @@ private:
   void delete_connections_();
 
   /**
+   * Deletes per-thread compressed spike data tables.
+   */
+  void delete_compressed_spike_data_();
+
+  /**
    * connect_ is used to establish a connection between a sender and
    * receiving node which both have proxies.
    *
@@ -629,9 +634,10 @@ private:
   /**
    * A structure to hold "unpacked" spikes on the postsynaptic side if
    * spike compression is enabled. Internally arranged in a 3d
-   * structure: target_threads|synapses|sources
+   * structure: target_threads|synapses|sources. The table of each thread
+   * is allocated by that thread and owned by ConnectionManager.
    */
-  std::vector< std::vector< std::vector< SpikeData > > > compressed_spike_data_;
+  std::vector< std::vector< std::vector< SpikeData > >* > compressed_spike_data_;
 
   /**
    * Stores absolute position in receive buffer of secondary events.
@@ -932,7 +938,8 @@ inline const std::vector< std::vector< SpikeData > >&
 ConnectionManager::get_compressed_spike_data( const size_t tid )
 {
   assert( tid < compressed_spike_data_.size() );
-  return compressed_spike_data_[ tid ];
+  assert( compressed_spike_data_[ tid ] );
+  return *compressed_spike_data_[ tid ];
 }
 
 inline void

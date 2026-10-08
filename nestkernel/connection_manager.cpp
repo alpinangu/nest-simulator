@@ -120,7 +120,7 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
-  compressed_spike_data_.resize( num_threads );
+  compressed_spike_data_.resize( num_threads, nullptr );
 
   has_primary_connections_ = false;
   check_primary_connections_.initialize( num_threads, false );
@@ -136,6 +136,7 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     const size_t tid = kernel().vp_manager.get_thread_id();
     connections_.at( tid ) = std::vector< ConnectorBase* >( num_conn_models );
     secondary_recv_buffer_pos_.at( tid ) = std::vector< std::vector< size_t > >();
+    compressed_spike_data_.at( tid ) = new std::vector< std::vector< SpikeData > >();
   }  // of omp parallel
 
   source_table_.initialize();
@@ -158,7 +159,7 @@ ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
   delete_connections_();
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
-  compressed_spike_data_.clear();
+  delete_compressed_spike_data_();
 
   if ( not adjust_number_of_threads_or_rng_only )
   {
@@ -334,6 +335,16 @@ ConnectionManager::delete_connections_()
       delete *conn;
     }
   }
+}
+
+void
+ConnectionManager::delete_compressed_spike_data_()
+{
+  for ( auto thread_csd : compressed_spike_data_ )
+  {
+    delete thread_csd;
+  }
+  compressed_spike_data_.clear();
 }
 
 const Time
@@ -1790,8 +1801,13 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
     kernel().get_omp_synchronization_construction_stopwatch().stop();
 #pragma omp master
     {
-      source_table_.fill_compressed_spike_data( compressed_spike_data_ );
+      source_table_.fill_compressed_spike_data_map();
     }  // of omp master; no barrier
+    kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier  // all threads must wait until compressed spike data map is complete
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
+
+    source_table_.fill_compressed_spike_data( tid, *compressed_spike_data_[ tid ] );
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier  // all threads must wait until compressed spike data is complete
     kernel().get_omp_synchronization_construction_stopwatch().stop();
@@ -1864,7 +1880,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
       {
         const auto target_thread = source_2_idx->second.get_target_thread();
         const SpikeData& conn_info =
-          compressed_spike_data_[ target_thread ][ syn_id ][ source_2_idx->second.get_source_index() ];
+          ( *compressed_spike_data_[ target_thread ] )[ syn_id ][ source_2_idx->second.get_source_index() ];
         assert( target_thread == static_cast< unsigned long >( conn_info.get_tid() ) );
         const size_t relative_recv_buffer_pos =
           get_secondary_recv_buffer_position( target_thread, syn_id, conn_info.get_lcid() )
