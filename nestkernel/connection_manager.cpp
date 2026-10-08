@@ -120,7 +120,7 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
-  compressed_spike_data_.resize( 0 );
+  compressed_spike_data_.resize( num_threads );
 
   has_primary_connections_ = false;
   check_primary_connections_.initialize( num_threads, false );
@@ -1858,7 +1858,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
       {
         const auto target_thread = source_2_idx->second.get_target_thread();
         const SpikeData& conn_info =
-          compressed_spike_data_[ syn_id ][ source_2_idx->second.get_source_index() ][ target_thread ];
+          compressed_spike_data_[ target_thread ][ syn_id ][ source_2_idx->second.get_source_index() ];
         assert( target_thread == static_cast< unsigned long >( conn_info.get_tid() ) );
         const size_t relative_recv_buffer_pos =
           get_secondary_recv_buffer_position( target_thread, syn_id, conn_info.get_lcid() )

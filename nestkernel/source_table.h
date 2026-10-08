@@ -191,6 +191,8 @@ private:
    * presynaptic side during construction of the presynaptic
    * connection infrastructure. Arranged as a one-dimensional vector
    * over synapse ids with an inner map (source node id -> (source_index+target_thread).
+   * The source index is the position of the source's entry in
+   * compressed_spike_data_[tid][syn_id] and is identical for all threads tid.
    */
   std::vector< std::map< size_t, CSDMapEntry > > compressed_spike_data_map_;
 
