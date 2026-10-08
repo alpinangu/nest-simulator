@@ -1776,19 +1776,25 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
   if ( use_compressed_spikes_ )
   {
 
-#pragma omp single
+#pragma omp master
     {
       source_table_.resize_compressible_sources();
-    }  // of omp single; implicit barrier
+    }  // of omp master; no barrier
+    kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier  // all threads must wait until compressible sources are resized
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
 
     source_table_.collect_compressible_sources( tid );
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
-#pragma omp single
+#pragma omp master
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );
-    }  // of omp single; implicit barrier
+    }  // of omp master; no barrier
+    kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier  // all threads must wait until compressed spike data is complete
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
   }
 }
 
