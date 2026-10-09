@@ -191,6 +191,8 @@ private:
    * presynaptic side during construction of the presynaptic
    * connection infrastructure. Arranged as a one-dimensional vector
    * over synapse ids with an inner map (source node id -> (source_index+target_thread).
+   * The source index is the position of the source's entry in
+   * compressed_spike_data_[tid][syn_id] and is identical for all threads tid.
    */
   std::vector< std::map< size_t, CSDMapEntry > > compressed_spike_data_map_;
 
@@ -349,15 +351,17 @@ public:
 
   // creates maps of sources with more than one thread-local target
   void collect_compressible_sources( const size_t tid );
-  // fills the compressed_spike_data structure in ConnectionManager
-  void fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
+  // assigns to each source with local targets an index into the compressed_spike_data structure
+  void fill_compressed_spike_data_map();
+  // fills the part of the compressed_spike_data structure in ConnectionManager belonging to given thread
+  void fill_compressed_spike_data( const size_t tid, std::vector< std::vector< SpikeData > >& compressed_spike_data );
 
   void clear_compressed_spike_data_map();
 
   void dump_sources() const;
   void dump_compressible_sources() const;
   void dump_compressed_spike_data(
-    const std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data ) const;
+    const std::vector< std::vector< std::vector< SpikeData > >* >& compressed_spike_data ) const;
 };
 
 inline void

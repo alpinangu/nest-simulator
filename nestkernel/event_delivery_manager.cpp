@@ -608,6 +608,10 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
   const size_t spike_buffer_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
   const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_connection_models( tid );
 
+  // Compressed spike data for this thread, arranged as synapses|sources. Only used if spike compression is active.
+  const std::vector< std::vector< SpikeData > >& compressed_spike_data =
+    kernel().connection_manager.get_compressed_spike_data( tid );
+
   // prepare Time objects for every possible time stamp within min_delay_
   std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
   for ( size_t lag = 0; lag < static_cast< size_t >( kernel().connection_manager.get_min_delay() ); ++lag )
@@ -714,9 +718,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
           // find the spike-data entry for this thread
-          const std::vector< SpikeData >& compressed_spike_data =
-            kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
-          lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
+          lcid_batch[ j ] = compressed_spike_data[ syn_id_batch[ j ] ][ lcid_batch[ j ] ].get_lcid();
         }
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
@@ -752,9 +754,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
         // find the spike-data entry for this thread
-        const std::vector< SpikeData >& compressed_spike_data =
-          kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
-        lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
+        lcid_batch[ j ] = compressed_spike_data[ syn_id_batch[ j ] ][ lcid_batch[ j ] ].get_lcid();
       }
       for ( size_t j = 0; j < num_remaining_entries; ++j )
       {

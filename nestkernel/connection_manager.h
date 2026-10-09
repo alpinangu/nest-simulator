@@ -460,7 +460,8 @@ public:
   // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_connect;
 
-  const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const size_t idx );
+  //! Return compressed spike data of given thread, arranged as synapses|sources.
+  const std::vector< std::vector< SpikeData > >& get_compressed_spike_data( const size_t tid );
 
   //! Set iteration_state_ entries for all threads to beginning of compressed_spike_data_map_.
   void initialize_iteration_state();
@@ -523,6 +524,11 @@ private:
    * Deletes all connections.
    */
   void delete_connections_();
+
+  /**
+   * Deletes per-thread compressed spike data tables.
+   */
+  void delete_compressed_spike_data_();
 
   /**
    * connect_ is used to establish a connection between a sender and
@@ -628,9 +634,10 @@ private:
   /**
    * A structure to hold "unpacked" spikes on the postsynaptic side if
    * spike compression is enabled. Internally arranged in a 3d
-   * structure: synapses|sources|target_threads
+   * structure: target_threads|synapses|sources. The table of each thread
+   * is allocated by that thread and owned by ConnectionManager.
    */
-  std::vector< std::vector< std::vector< SpikeData > > > compressed_spike_data_;
+  std::vector< std::vector< std::vector< SpikeData > >* > compressed_spike_data_;
 
   /**
    * Stores absolute position in receive buffer of secondary events.
@@ -927,10 +934,12 @@ ConnectionManager::set_source_has_more_targets( const size_t tid,
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
 }
 
-inline const std::vector< SpikeData >&
-ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx )
+inline const std::vector< std::vector< SpikeData > >&
+ConnectionManager::get_compressed_spike_data( const size_t tid )
 {
-  return compressed_spike_data_[ syn_id ][ idx ];
+  assert( tid < compressed_spike_data_.size() );
+  assert( compressed_spike_data_[ tid ] );
+  return *compressed_spike_data_[ tid ];
 }
 
 inline void

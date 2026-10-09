@@ -543,59 +543,73 @@ SourceTable::dump_compressible_sources() const
 }
 
 void
-SourceTable::fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
+SourceTable::fill_compressed_spike_data_map()
 {
   const size_t num_synapse_models = kernel().model_manager.get_num_connection_models();
-  compressed_spike_data.clear();
-  compressed_spike_data.resize( num_synapse_models );
+  const size_t num_threads = kernel().vp_manager.get_num_threads();
+  assert( compressible_sources_.size() == num_threads );
+
   compressed_spike_data_map_.clear();
   compressed_spike_data_map_.resize( num_synapse_models, std::map< size_t, CSDMapEntry >() );
 
   // For each synapse type, and for each source neuron with at least one local target,
-  // store in compressed_spike_data one SpikeData entry for each local thread that
-  // owns a local target. In compressed_spike_data_map_ store index into compressed_spike_data[syn_id]
-  // where data for a given source is stored.
-
-  // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
-  //       Maybe one can exploit that to avoid searching with find() below.
-  for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
+  // store in compressed_spike_data_map_ the index at which data for that source is stored in
+  // compressed_spike_data[tid][syn_id] for all threads tid.
+  for ( synindex syn_id = 0; syn_id < num_synapse_models; ++syn_id )
   {
-    for ( size_t target_thread = 0; target_thread < static_cast< size_t >( compressible_sources_.size() );
-      ++target_thread )
+    auto& csd_map = compressed_spike_data_map_[ syn_id ];
+
+    // Assign source indices; a source keeps the first target thread found.
+    for ( size_t target_thread = 0; target_thread < num_threads; ++target_thread )
     {
       for ( const auto& connection : compressible_sources_[ target_thread ][ syn_id ] )
       {
-        const auto source_gid = connection.first;
+        csd_map.try_emplace( connection.first, csd_map.size(), target_thread );
+      }
+    }
+  }  // for syn_id
+}
 
-        if ( compressed_spike_data_map_[ syn_id ].find( source_gid ) == compressed_spike_data_map_[ syn_id ].end() )
-        {
-          // Set up entry for new source
-          const auto new_source_index = compressed_spike_data[ syn_id ].size();
+void
+SourceTable::fill_compressed_spike_data( const size_t tid,
+  std::vector< std::vector< SpikeData > >& compressed_spike_data )
+{
+  const size_t num_synapse_models = compressed_spike_data_map_.size();
 
-          compressed_spike_data[ syn_id ].emplace_back( kernel().vp_manager.get_num_threads(),
-            SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
+  // Executed by each thread for its own data, so that all memory is allocated by the owning thread.
+  compressed_spike_data.clear();
+  compressed_spike_data.resize( num_synapse_models );
 
-          compressed_spike_data_map_[ syn_id ].insert(
-            std::make_pair( source_gid, CSDMapEntry( new_source_index, target_thread ) ) );
-        }
+  // Each thread holds an entry for every source, since source indices are shared across threads;
+  // entries are valid only if the thread owns a local target of the source.
+  const SpikeData invalid_entry( invalid_targetindex, invalid_synindex, invalid_lcid, 0 );
 
-        const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second.get_source_index();
+  // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
+  //       Maybe one can exploit that to avoid searching with find() below.
+  for ( synindex syn_id = 0; syn_id < num_synapse_models; ++syn_id )
+  {
+    const auto& csd_map = compressed_spike_data_map_[ syn_id ];
+    auto& syn_csd = compressed_spike_data[ syn_id ];
 
-        assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
+    syn_csd.assign( csd_map.size(), invalid_entry );
 
-        compressed_spike_data[ syn_id ][ source_index ][ target_thread ] = connection.second;
-      }  // for connection
+    for ( const auto& connection : compressible_sources_[ tid ][ syn_id ] )
+    {
+      const auto source_index = csd_map.find( connection.first )->second.get_source_index();
 
-      compressible_sources_[ target_thread ][ syn_id ].clear();
+      assert( syn_csd[ source_index ].get_lcid() == invalid_lcid );
 
-    }  // for target_thread
+      syn_csd[ source_index ] = connection.second;
+    }  // for connection
+
+    compressible_sources_[ tid ][ syn_id ].clear();
   }  // for syn_id
 }
 
 // Argument name only needed if full logging is activated. Macro-protect to avoid unused argument warning.
 void
 SourceTable::dump_compressed_spike_data(
-  const std::vector< std::vector< std::vector< SpikeData > > >& FULL_LOGGING_ONLY( compressed_spike_data ) ) const
+  const std::vector< std::vector< std::vector< SpikeData > >* >& FULL_LOGGING_ONLY( compressed_spike_data ) ) const
 {
   FULL_LOGGING_ONLY(
     for ( const auto& tab : compressed_spike_data_map_ ) {
@@ -610,18 +624,22 @@ SourceTable::dump_compressed_spike_data(
       }
     }
 
-    for ( const auto& tab : compressed_spike_data ) {
-      for ( size_t six = 0; six < tab.size(); ++six )
+    // compressed_spike_data is arranged as threads|synapses|sources, dump ordered by synapse, source, thread
+    if ( not compressed_spike_data.empty() ) {
+      for ( size_t syn_id = 0; syn_id < compressed_spike_data[ 0 ]->size(); ++syn_id )
       {
-        for ( size_t tx = 0; tx < tab[ six ].size(); ++tx )
+        for ( size_t six = 0; six < ( *compressed_spike_data[ 0 ] )[ syn_id ].size(); ++six )
         {
-          kernel().write_to_dump( String::compose( "csd  : r%1 t%2 six%3 tx%4 l%5 tt%6",
-            kernel().mpi_manager.get_rank(),
-            kernel().vp_manager.get_thread_id(),
-            six,
-            tx,
-            tab[ six ][ tx ].get_lcid(),
-            tab[ six ][ tx ].get_tid() ) );
+          for ( size_t tx = 0; tx < compressed_spike_data.size(); ++tx )
+          {
+            kernel().write_to_dump( String::compose( "csd  : r%1 t%2 six%3 tx%4 l%5 tt%6",
+              kernel().mpi_manager.get_rank(),
+              kernel().vp_manager.get_thread_id(),
+              six,
+              tx,
+              ( *compressed_spike_data[ tx ] )[ syn_id ][ six ].get_lcid(),
+              ( *compressed_spike_data[ tx ] )[ syn_id ][ six ].get_tid() ) );
+          }
         }
       }
     } )
