@@ -1808,18 +1808,30 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
 #pragma omp barrier  // all threads must wait until compressed spike data map is complete
     kernel().get_omp_synchronization_construction_stopwatch().stop();
 
-    auto before = read_numastat();
+    decltype( read_numastat() ) before;
+#pragma omp master
+    {
+      before = read_numastat();
+    }
+
+#pragma omp barrier  // Wait for master to finish reading
     source_table_.fill_compressed_spike_data( tid, *compressed_spike_data_[ tid ] );
-    auto after = read_numastat();
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier  // all threads must wait until compressed spike data is complete
     kernel().get_omp_synchronization_construction_stopwatch().stop();
 
-    std::cout << "\n\nNUMASTAT of fill_compressed_spike_data\n";
-    for ( const auto& [ key, value ] : after )
+#pragma omp master
     {
-      std::cout << key << ": " << value - before.at( key ) << '\n';
+      auto after = read_numastat();
+
+      std::cout << "\n\nNUMASTAT of fill_compressed_spike_data\n";
+      for ( const auto& [ key, value ] : after )
+      {
+        std::cout << key << ": " << value - before.at( key ) << '\n';
+      }
     }
+
+#pragma omp barrier  // Prevent other threads from proceeding during measurement
   }
 }
 
